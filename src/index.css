@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  --font-mono: "Space Mono", monospace;
+  --font-sans: "Inter", sans-serif;
+  --color-brand-primary: #4b5563;
+  --color-brand-secondary: #FFFFFF;
+}
+
+body {
+  @apply bg-white text-[#4b5563] font-sans;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-serif;
+}
+
+.markdown-body {
+  @apply font-serif text-sm leading-relaxed text-[#4b5563];
+}
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+  @apply font-bold mt-6 mb-3 uppercase tracking-tight;
+}
+.markdown-body h1 { @apply text-2xl; }
+.markdown-body h2 { @apply text-xl; }
+.markdown-body h3 { @apply text-lg; }
+.markdown-body p { @apply mb-4; }
+.markdown-body ul { @apply list-disc pl-5 mb-4; }
+.markdown-body ol { @apply list-decimal pl-5 mb-4; }
+.markdown-body li { @apply mb-1; }
+.markdown-body strong { @apply font-bold; }
+.markdown-body em { @apply italic; }
+.markdown-body a { @apply underline hover:text-[#4b5563]/70; }
+.markdown-body blockquote { @apply border-l-4 border-[#4b5563] pl-4 italic my-4; }
+.markdown-body code { @apply font-mono bg-white border border-[#4b5563] px-1 py-0.5 text-xs; }
+.markdown-body pre { @apply bg-[#4b5563] text-white p-4 overflow-x-auto mb-4 border-2 border-[#4b5563]; }
+.markdown-body pre code { @apply bg-transparent text-inherit p-0 text-xs border-0; }
