@@ -132,6 +132,7 @@ interface UserProfile {
   badges?: string[];
   quizResults?: Record<string, number>;
   profileImage?: string;
+  role?: 'admin' | 'user';
 }
 
 interface Todo {
@@ -176,13 +177,13 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
       const errorMessage = this.state.error.message || String(this.state.error);
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-white p-4">
-          <div className="bg-[#141414] text-white p-8 border-2 border-[#141414] shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] max-w-md w-full">
+        <div className="min-h-screen flex items-center justify-center bg-[#fdfbf7] p-4">
+          <div className="bg-[#1a3636] text-[#fdfbf7] p-8 border-2 border-[#1a3636] shadow-[8px_8px_0px_0px_rgba(13,27,27,1)] max-w-md w-full">
             <h2 className="text-2xl font-bold font-serif mb-4 uppercase tracking-widest">Application Error</h2>
             <p className="text-sm font-serif italic mb-6">{errorMessage}</p>
             <button 
               onClick={() => window.location.reload()}
-              className="w-full bg-white text-[#141414] py-3 px-4 text-sm font-bold uppercase tracking-widest hover:bg-white transition-colors"
+              className="w-full bg-[#fdfbf7] text-[#1a3636] py-3 px-4 text-sm font-bold uppercase tracking-widest hover:bg-[#fdfbf7] transition-colors"
             >
               Reload Application
             </button>
@@ -256,30 +257,30 @@ function ChatBot() {
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            className="bg-white border-4 border-[#141414] shadow-[12px_12px_0px_0px_rgba(20,20,20,1)] w-80 md:w-96 h-[500px] flex flex-col mb-4 overflow-hidden relative"
+            className="bg-[#fdfbf7] border-4 border-[#1a3636] shadow-[12px_12px_0px_0px_rgba(13,27,27,1)] w-80 md:w-96 h-[500px] flex flex-col mb-4 overflow-hidden relative"
           >
             {/* Vintage noise overlay */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
 
             {/* Header */}
-            <div className="bg-[#141414] text-white p-4 flex justify-between items-center border-b-2 border-[#141414] relative z-10">
+            <div className="bg-[#1a3636] text-[#fdfbf7] p-4 flex justify-between items-center border-b-2 border-[#1a3636] relative z-10">
               <div className="flex items-center">
                 <MessageSquare className="h-5 w-5 mr-2" />
                 <span className="font-bold uppercase tracking-widest text-xs">Career Advisor</span>
               </div>
               <div className="flex items-center space-x-2">
-                <button onClick={clearChat} className="hover:text-white transition-colors p-1" title="Clear Chat">
+                <button onClick={clearChat} className="hover:text-[#fdfbf7] transition-colors p-1" title="Clear Chat">
                   <Trash2 className="h-4 w-4" />
                 </button>
-                <button onClick={() => setIsOpen(false)} className="hover:text-white transition-colors">
+                <button onClick={() => setIsOpen(false)} className="hover:text-[#fdfbf7] transition-colors">
                   <X className="h-5 w-5" />
                 </button>
               </div>
             </div>
 
             {/* Model Selector */}
-            <div className="bg-white p-2 border-b-2 border-[#141414] flex justify-between items-center relative z-10">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#141414]/70">Model:</span>
+            <div className="bg-[#fdfbf7] p-2 border-b-2 border-[#1a3636] flex justify-between items-center relative z-10">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#1a3636]/70">Model:</span>
               <select 
                 value={model} 
                 onChange={(e) => setModel(e.target.value as any)}
@@ -292,16 +293,16 @@ function ChatBot() {
             </div>
 
             {/* Messages */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-white relative z-10">
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#fdfbf7] relative z-10">
               {messages.length === 0 && (
                 <div className="text-center py-10">
-                  <Target className="h-10 w-10 mx-auto text-[#141414]/20 mb-4" />
-                  <p className="text-xs font-serif italic text-[#141414]/50">Ask me anything about your career roadmap!</p>
+                  <Target className="h-10 w-10 mx-auto text-[#1a3636]/20 mb-4" />
+                  <p className="text-xs font-serif italic text-[#1a3636]/50">Ask me anything about your career roadmap!</p>
                 </div>
               )}
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] p-3 border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] ${msg.role === 'user' ? 'bg-[#141414] text-white' : 'bg-white text-[#141414]'}`}>
+                  <div className={`max-w-[85%] p-3 border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] ${msg.role === 'user' ? 'bg-[#1a3636] text-[#fdfbf7]' : 'bg-[#fdfbf7] text-[#1a3636]'}`}>
                     <div className="text-xs font-serif leading-relaxed whitespace-pre-wrap prose prose-invert prose-xs">
                       <Markdown>{msg.parts[0].text}</Markdown>
                     </div>
@@ -310,11 +311,11 @@ function ChatBot() {
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-white p-3 border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">
+                  <div className="bg-[#fdfbf7] p-3 border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)]">
                     <div className="flex space-x-1">
-                      <div className="w-1.5 h-1.5 bg-[#141414] rounded-full animate-bounce"></div>
-                      <div className="w-1.5 h-1.5 bg-[#141414] rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                      <div className="w-1.5 h-1.5 bg-[#141414] rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                      <div className="w-1.5 h-1.5 bg-[#1a3636] rounded-full animate-bounce"></div>
+                      <div className="w-1.5 h-1.5 bg-[#1a3636] rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                      <div className="w-1.5 h-1.5 bg-[#1a3636] rounded-full animate-bounce [animation-delay:-0.3s]"></div>
                     </div>
                   </div>
                 </div>
@@ -322,7 +323,7 @@ function ChatBot() {
             </div>
 
             {/* Input */}
-            <div className="p-4 border-t-2 border-[#141414] bg-white relative z-10">
+            <div className="p-4 border-t-2 border-[#1a3636] bg-[#fdfbf7] relative z-10">
               <form 
                 onSubmit={(e) => { e.preventDefault(); sendMessage(); }}
                 className="flex space-x-2"
@@ -332,13 +333,13 @@ function ChatBot() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Type your message..."
-                  className="flex-1 bg-white border-2 border-[#141414] px-3 py-2 text-xs font-bold uppercase tracking-wider focus:outline-none placeholder-[#141414]/30 rounded-none"
+                  className="flex-1 bg-[#fdfbf7] border-2 border-[#1a3636] px-3 py-2 text-xs font-bold uppercase tracking-wider focus:outline-none placeholder-[#1a3636]/30 rounded-none"
                   disabled={isLoading}
                 />
                 <button 
                   type="submit"
                   disabled={isLoading || !input.trim()}
-                  className="bg-[#141414] text-white p-2 border-2 border-[#141414] hover:bg-white hover:text-[#141414] transition-colors disabled:opacity-50 rounded-none"
+                  className="bg-[#1a3636] text-[#fdfbf7] p-2 border-2 border-[#1a3636] hover:bg-[#fdfbf7] hover:text-[#1a3636] transition-colors disabled:opacity-50 rounded-none"
                 >
                   <Send className="h-4 w-4" />
                 </button>
@@ -350,7 +351,7 @@ function ChatBot() {
 
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-[#141414] text-white p-4 border-4 border-[#141414] shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] hover:translate-y-[-4px] hover:shadow-[12px_12px_0px_0px_rgba(20,20,20,1)] transition-all active:translate-y-0 active:shadow-none relative z-[201]"
+        className="bg-[#1a3636] text-[#fdfbf7] p-4 border-4 border-[#1a3636] shadow-[8px_8px_0px_0px_rgba(13,27,27,1)] hover:translate-y-[-4px] hover:shadow-[12px_12px_0px_0px_rgba(13,27,27,1)] transition-all active:translate-y-0 active:shadow-none relative z-[201]"
       >
         {isOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
       </button>
@@ -384,6 +385,7 @@ export default function App() {
               education: '',
               country: '',
               matchedJobId: pendingJobId || null,
+              role: 'user',
               milestones: {
                 discovery: !!pendingJobId,
                 skills: false,
@@ -421,58 +423,58 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="animate-spin rounded-none h-12 w-12 border-t-4 border-b-4 border-[#141414]"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[#fdfbf7]">
+        <div className="animate-spin rounded-none h-12 w-12 border-t-4 border-b-4 border-[#1a3636]"></div>
       </div>
     );
   }
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen flex flex-col font-sans bg-white text-[#141414] selection:bg-[#141414] selection:text-white">
+      <div className="min-h-screen flex flex-col font-sans bg-[#fdfbf7] text-[#1a3636] selection:bg-[#1a3636] selection:text-[#fdfbf7]">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white border-b-4 border-[#141414]">
+      <header className="sticky top-0 z-50 bg-[#fdfbf7] border-b-4 border-[#1a3636]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center cursor-pointer" onClick={() => navigate('home')}>
-              <div className="bg-[#141414] p-2 border-2 border-[#141414] shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] mr-3">
-                <Target className="text-white h-6 w-6" />
+              <div className="bg-[#1a3636] p-2 border-2 border-[#1a3636] shadow-[2px_2px_0px_0px_rgba(13,27,27,1)] mr-3">
+                <Target className="text-[#fdfbf7] h-6 w-6" />
               </div>
-              <span className="text-2xl font-bold font-serif text-[#141414] uppercase tracking-widest">Your SkillGAP</span>
+              <span className="text-2xl font-bold font-serif text-[#1a3636] uppercase tracking-widest">Your SkillGAP</span>
             </div>
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex space-x-8 items-center">
-              <button onClick={() => navigate('home')} className={`text-sm font-bold uppercase tracking-wider ${view === 'home' ? 'text-[#141414] underline decoration-2 underline-offset-4' : 'text-[#141414]/80 hover:text-[#141414] hover:underline decoration-2 underline-offset-4'}`}>Home</button>
-              <button onClick={() => navigate('directory')} className={`text-sm font-bold uppercase tracking-wider ${view === 'directory' ? 'text-[#141414] underline decoration-2 underline-offset-4' : 'text-[#141414]/80 hover:text-[#141414] hover:underline decoration-2 underline-offset-4'}`}>Careers</button>
-              <button onClick={() => navigate('skillQuiz')} className={`text-sm font-bold uppercase tracking-wider ${view === 'skillQuiz' ? 'text-[#141414] underline decoration-2 underline-offset-4' : 'text-[#141414]/80 hover:text-[#141414] hover:underline decoration-2 underline-offset-4'}`}>Skill Quiz</button>
-              <button onClick={() => navigate('blog')} className={`text-sm font-bold uppercase tracking-wider ${view === 'blog' ? 'text-[#141414] underline decoration-2 underline-offset-4' : 'text-[#141414]/80 hover:text-[#141414] hover:underline decoration-2 underline-offset-4'}`}>Blog</button>
-              <button onClick={() => navigate('about')} className={`text-sm font-bold uppercase tracking-wider ${view === 'about' ? 'text-[#141414] underline decoration-2 underline-offset-4' : 'text-[#141414]/80 hover:text-[#141414] hover:underline decoration-2 underline-offset-4'}`}>About</button>
+              <button onClick={() => navigate('home')} className={`text-sm font-bold uppercase tracking-wider ${view === 'home' ? 'text-[#1a3636] underline decoration-2 underline-offset-4' : 'text-[#1a3636]/80 hover:text-[#1a3636] hover:underline decoration-2 underline-offset-4'}`}>Home</button>
+              <button onClick={() => navigate('directory')} className={`text-sm font-bold uppercase tracking-wider ${view === 'directory' ? 'text-[#1a3636] underline decoration-2 underline-offset-4' : 'text-[#1a3636]/80 hover:text-[#1a3636] hover:underline decoration-2 underline-offset-4'}`}>Careers</button>
+              <button onClick={() => navigate('skillQuiz')} className={`text-sm font-bold uppercase tracking-wider ${view === 'skillQuiz' ? 'text-[#1a3636] underline decoration-2 underline-offset-4' : 'text-[#1a3636]/80 hover:text-[#1a3636] hover:underline decoration-2 underline-offset-4'}`}>Skill Quiz</button>
+              <button onClick={() => navigate('blog')} className={`text-sm font-bold uppercase tracking-wider ${view === 'blog' ? 'text-[#1a3636] underline decoration-2 underline-offset-4' : 'text-[#1a3636]/80 hover:text-[#1a3636] hover:underline decoration-2 underline-offset-4'}`}>Blog</button>
+              <button onClick={() => navigate('about')} className={`text-sm font-bold uppercase tracking-wider ${view === 'about' ? 'text-[#1a3636] underline decoration-2 underline-offset-4' : 'text-[#1a3636]/80 hover:text-[#1a3636] hover:underline decoration-2 underline-offset-4'}`}>About</button>
               
               {user ? (
                 <div className="flex items-center space-x-3">
-                  <button onClick={() => navigate('dashboard')} className="bg-[#141414] text-white px-4 py-2 border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-wider font-bold text-xs">Dashboard</button>
-                  <button onClick={() => navigate('profile')} className="flex items-center space-x-2 px-3 py-2 text-[#141414] hover:bg-[#141414]/10 border-2 border-transparent hover:border-[#141414] transition-all font-bold uppercase tracking-wider text-xs">
+                  <button onClick={() => navigate('dashboard')} className="bg-[#1a3636] text-[#fdfbf7] px-4 py-2 border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-wider font-bold text-xs">Dashboard</button>
+                  <button onClick={() => navigate('profile')} className="flex items-center space-x-2 px-3 py-2 text-[#1a3636] hover:bg-[#1a3636]/10 border-2 border-transparent hover:border-[#1a3636] transition-all font-bold uppercase tracking-wider text-xs">
                     {profile?.profileImage ? (
-                      <img src={profile.profileImage} alt="Profile" className="h-6 w-6 object-cover border-2 border-[#141414]" />
+                      <img src={profile.profileImage} alt="Profile" className="h-6 w-6 object-cover border-2 border-[#1a3636]" />
                     ) : (
                       <User className="h-5 w-5" />
                     )}
                     <span>Profile</span>
                   </button>
-                  <button onClick={handleLogout} className="flex items-center space-x-2 px-3 py-2 text-[#141414] hover:bg-[#141414]/10 border-2 border-transparent hover:border-[#141414] transition-all font-bold uppercase tracking-wider text-xs">
+                  <button onClick={handleLogout} className="flex items-center space-x-2 px-3 py-2 text-[#1a3636] hover:bg-[#1a3636]/10 border-2 border-transparent hover:border-[#1a3636] transition-all font-bold uppercase tracking-wider text-xs">
                     <LogOut className="h-5 w-5" />
                     <span>Logout</span>
                   </button>
                 </div>
               ) : (
-                <button onClick={() => navigate('auth')} className="bg-white text-[#141414] px-6 py-2 border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-wider font-bold text-xs">Login</button>
+                <button onClick={() => navigate('auth')} className="bg-[#fdfbf7] text-[#1a3636] px-6 py-2 border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-wider font-bold text-xs">Login</button>
               )}
             </nav>
 
             {/* Mobile Menu Toggle */}
             <div className="md:hidden flex items-center">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-[#141414] p-2 border-2 border-transparent hover:border-[#141414]">
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-[#1a3636] p-2 border-2 border-transparent hover:border-[#1a3636]">
                 {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
             </div>
@@ -486,32 +488,32 @@ export default function App() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-white border-t-4 border-[#141414] overflow-hidden"
+              className="md:hidden bg-[#fdfbf7] border-t-4 border-[#1a3636] overflow-hidden"
             >
               <div className="px-4 pt-4 pb-6 space-y-3">
-                <button onClick={() => navigate('home')} className="block w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#141414] border-2 border-transparent hover:border-[#141414] hover:bg-[#141414]/5">Home</button>
-                <button onClick={() => navigate('directory')} className="block w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#141414] border-2 border-transparent hover:border-[#141414] hover:bg-[#141414]/5">Careers</button>
-                <button onClick={() => navigate('skillQuiz')} className="block w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#141414] border-2 border-transparent hover:border-[#141414] hover:bg-[#141414]/5">Skill Quiz</button>
-                <button onClick={() => navigate('blog')} className="block w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#141414] border-2 border-transparent hover:border-[#141414] hover:bg-[#141414]/5">Blog</button>
-                <button onClick={() => navigate('about')} className="block w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#141414] border-2 border-transparent hover:border-[#141414] hover:bg-[#141414]/5">About</button>
+                <button onClick={() => navigate('home')} className="block w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#1a3636] border-2 border-transparent hover:border-[#1a3636] hover:bg-[#1a3636]/5">Home</button>
+                <button onClick={() => navigate('directory')} className="block w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#1a3636] border-2 border-transparent hover:border-[#1a3636] hover:bg-[#1a3636]/5">Careers</button>
+                <button onClick={() => navigate('skillQuiz')} className="block w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#1a3636] border-2 border-transparent hover:border-[#1a3636] hover:bg-[#1a3636]/5">Skill Quiz</button>
+                <button onClick={() => navigate('blog')} className="block w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#1a3636] border-2 border-transparent hover:border-[#1a3636] hover:bg-[#1a3636]/5">Blog</button>
+                <button onClick={() => navigate('about')} className="block w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#1a3636] border-2 border-transparent hover:border-[#1a3636] hover:bg-[#1a3636]/5">About</button>
                 {user ? (
                   <>
-                    <button onClick={() => navigate('dashboard')} className="block w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#141414] border-2 border-transparent hover:border-[#141414] hover:bg-[#141414]/5">Dashboard</button>
-                    <button onClick={() => navigate('profile')} className="flex items-center w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#141414] border-2 border-transparent hover:border-[#141414] hover:bg-[#141414]/5">
+                    <button onClick={() => navigate('dashboard')} className="block w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#1a3636] border-2 border-transparent hover:border-[#1a3636] hover:bg-[#1a3636]/5">Dashboard</button>
+                    <button onClick={() => navigate('profile')} className="flex items-center w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#1a3636] border-2 border-transparent hover:border-[#1a3636] hover:bg-[#1a3636]/5">
                       {profile?.profileImage ? (
-                        <img src={profile.profileImage} alt="Profile" className="h-5 w-5 object-cover border-2 border-[#141414] mr-3" />
+                        <img src={profile.profileImage} alt="Profile" className="h-5 w-5 object-cover border-2 border-[#1a3636] mr-3" />
                       ) : (
                         <User className="h-5 w-5 mr-3" />
                       )}
                       Profile
                     </button>
-                    <button onClick={handleLogout} className="flex items-center w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#141414] border-2 border-transparent hover:border-[#141414] hover:bg-[#141414]/5">
+                    <button onClick={handleLogout} className="flex items-center w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-wider text-[#1a3636] border-2 border-transparent hover:border-[#1a3636] hover:bg-[#1a3636]/5">
                       <LogOut className="h-5 w-5 mr-3" />
                       Logout
                     </button>
                   </>
                 ) : (
-                  <button onClick={() => navigate('auth')} className="block w-full text-center px-4 py-3 text-sm font-bold uppercase tracking-wider bg-[#141414] text-white border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] active:translate-y-1 active:shadow-none transition-all mt-4">Login / Register</button>
+                  <button onClick={() => navigate('auth')} className="block w-full text-center px-4 py-3 text-sm font-bold uppercase tracking-wider bg-[#1a3636] text-[#fdfbf7] border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] active:translate-y-1 active:shadow-none transition-all mt-4">Login / Register</button>
                 )}
               </div>
             </motion.div>
@@ -536,7 +538,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#141414] text-white pt-20 pb-10 border-t-4 border-[#141414] relative overflow-hidden">
+      <footer className="bg-[#1a3636] text-[#fdfbf7] pt-20 pb-10 border-t-4 border-[#1a3636] relative overflow-hidden">
         {/* Vintage noise overlay */}
         <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
         
@@ -544,36 +546,36 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-1">
               <div className="flex items-center mb-6">
-                <div className="bg-white p-2 border-2 border-white mr-3">
-                  <Target className="text-[#141414] h-6 w-6" />
+                <div className="bg-[#fdfbf7] p-2 border-2 border-[#fdfbf7] mr-3">
+                  <Target className="text-[#1a3636] h-6 w-6" />
                 </div>
                 <span className="text-2xl font-bold font-serif uppercase tracking-widest">Your SkillGAP</span>
               </div>
-              <p className="text-white/80 text-sm leading-relaxed mb-8 font-serif italic">
+              <p className="text-[#fdfbf7]/80 text-sm leading-relaxed mb-8 font-serif italic">
                 Empowering the next generation of tech leaders by bridging the gap between education and industry through personalized roadmaps.
               </p>
               <div className="flex space-x-4">
-                <a href="#" className="p-3 bg-white text-[#141414] hover:bg-white border-2 border-white transition-colors"><Linkedin className="h-5 w-5" /></a>
-                <a href="#" className="p-3 bg-white text-[#141414] hover:bg-white border-2 border-white transition-colors"><Twitter className="h-5 w-5" /></a>
-                <a href="#" className="p-3 bg-white text-[#141414] hover:bg-white border-2 border-white transition-colors"><Instagram className="h-5 w-5" /></a>
-                <a href="#" className="p-3 bg-white text-[#141414] hover:bg-white border-2 border-white transition-colors"><Github className="h-5 w-5" /></a>
+                <a href="#" className="p-3 bg-[#fdfbf7] text-[#1a3636] hover:bg-[#fdfbf7] border-2 border-[#fdfbf7] transition-colors"><Linkedin className="h-5 w-5" /></a>
+                <a href="#" className="p-3 bg-[#fdfbf7] text-[#1a3636] hover:bg-[#fdfbf7] border-2 border-[#fdfbf7] transition-colors"><Twitter className="h-5 w-5" /></a>
+                <a href="#" className="p-3 bg-[#fdfbf7] text-[#1a3636] hover:bg-[#fdfbf7] border-2 border-[#fdfbf7] transition-colors"><Instagram className="h-5 w-5" /></a>
+                <a href="#" className="p-3 bg-[#fdfbf7] text-[#1a3636] hover:bg-[#fdfbf7] border-2 border-[#fdfbf7] transition-colors"><Github className="h-5 w-5" /></a>
               </div>
             </div>
 
             <div>
-              <h4 className="text-lg font-bold mb-6 font-serif uppercase tracking-widest border-b-2 border-white/20 pb-2 inline-block">Quick Links</h4>
-              <ul className="space-y-4 text-white/80 text-sm font-bold uppercase tracking-wider">
-                <li><button onClick={() => navigate('home')} className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-all">Home</button></li>
-                <li><button onClick={() => navigate('directory')} className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-all">Career Directory</button></li>
-                <li><button onClick={() => navigate('blog')} className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-all">Career Blog</button></li>
-                <li><button onClick={() => navigate('about')} className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-all">About Us</button></li>
-                <li><button onClick={() => navigate('auth')} className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-all">Join Now</button></li>
+              <h4 className="text-lg font-bold mb-6 font-serif uppercase tracking-widest border-b-2 border-[#fdfbf7]/20 pb-2 inline-block">Quick Links</h4>
+              <ul className="space-y-4 text-[#fdfbf7]/80 text-sm font-bold uppercase tracking-wider">
+                <li><button onClick={() => navigate('home')} className="hover:text-[#fdfbf7] hover:underline decoration-2 underline-offset-4 transition-all">Home</button></li>
+                <li><button onClick={() => navigate('directory')} className="hover:text-[#fdfbf7] hover:underline decoration-2 underline-offset-4 transition-all">Career Directory</button></li>
+                <li><button onClick={() => navigate('blog')} className="hover:text-[#fdfbf7] hover:underline decoration-2 underline-offset-4 transition-all">Career Blog</button></li>
+                <li><button onClick={() => navigate('about')} className="hover:text-[#fdfbf7] hover:underline decoration-2 underline-offset-4 transition-all">About Us</button></li>
+                <li><button onClick={() => navigate('auth')} className="hover:text-[#fdfbf7] hover:underline decoration-2 underline-offset-4 transition-all">Join Now</button></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-lg font-bold mb-6 font-serif uppercase tracking-widest border-b-2 border-white/20 pb-2 inline-block">Our Office</h4>
-              <div className="overflow-hidden h-40 mb-4 border-2 border-white">
+              <h4 className="text-lg font-bold mb-6 font-serif uppercase tracking-widest border-b-2 border-[#fdfbf7]/20 pb-2 inline-block">Our Office</h4>
+              <div className="overflow-hidden h-40 mb-4 border-2 border-[#fdfbf7]">
                 <iframe 
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.835434509374!2d-122.4194155!3d37.7749295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085809c6c8f4459%3A0xb10ed6d9b5050fa5!2sTwitter%20HQ!5e0!3m2!1sen!2sus!4v1633000000000!5m2!1sen!2sus" 
                   width="100%" 
@@ -583,38 +585,38 @@ export default function App() {
                   loading="lazy"
                 ></iframe>
               </div>
-              <div className="flex items-center text-white/80 text-xs font-bold uppercase tracking-wider">
-                <MapPin className="h-4 w-4 mr-2 text-white" />
+              <div className="flex items-center text-[#fdfbf7]/80 text-xs font-bold uppercase tracking-wider">
+                <MapPin className="h-4 w-4 mr-2 text-[#fdfbf7]" />
                 <span>1355 Market St, San Francisco, CA 94103</span>
               </div>
             </div>
 
             <div>
-              <h4 className="text-lg font-bold mb-6 font-serif uppercase tracking-widest border-b-2 border-white/20 pb-2 inline-block">Newsletter</h4>
-              <p className="text-white/80 text-sm mb-6 font-serif italic">Get the latest career tips and roadmap updates.</p>
+              <h4 className="text-lg font-bold mb-6 font-serif uppercase tracking-widest border-b-2 border-[#fdfbf7]/20 pb-2 inline-block">Newsletter</h4>
+              <p className="text-[#fdfbf7]/80 text-sm mb-6 font-serif italic">Get the latest career tips and roadmap updates.</p>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="relative">
                   <input 
                     type="email" 
                     placeholder="YOUR EMAIL" 
-                    className="w-full bg-white text-[#141414] border-2 border-white py-3 px-4 text-sm font-bold uppercase tracking-wider focus:outline-none focus:bg-white placeholder-[#141414]/50 transition-colors"
+                    className="w-full bg-[#fdfbf7] text-[#1a3636] border-2 border-[#fdfbf7] py-3 px-4 text-sm font-bold uppercase tracking-wider focus:outline-none focus:bg-[#fdfbf7] placeholder-[#1a3636]/50 transition-colors"
                     required
                   />
-                  <button type="submit" className="absolute right-2 top-2 bottom-2 px-4 bg-[#141414] text-white border-2 border-[#141414] hover:bg-white hover:text-[#141414] transition-colors flex items-center justify-center">
+                  <button type="submit" className="absolute right-2 top-2 bottom-2 px-4 bg-[#1a3636] text-[#fdfbf7] border-2 border-[#1a3636] hover:bg-[#fdfbf7] hover:text-[#1a3636] transition-colors flex items-center justify-center">
                     <Send className="h-4 w-4" />
                   </button>
                 </div>
-                <p className="text-[10px] text-white/60 font-bold uppercase tracking-widest">We respect your privacy. Unsubscribe at any time.</p>
+                <p className="text-[10px] text-[#fdfbf7]/60 font-bold uppercase tracking-widest">We respect your privacy. Unsubscribe at any time.</p>
               </form>
             </div>
           </div>
 
-          <div className="pt-8 border-t-2 border-white/20 flex flex-col md:flex-row justify-between items-center text-white/60 text-xs font-bold uppercase tracking-widest">
+          <div className="pt-8 border-t-2 border-[#fdfbf7]/20 flex flex-col md:flex-row justify-between items-center text-[#fdfbf7]/60 text-xs font-bold uppercase tracking-widest">
             <p>© 2024 Your SkillGAP. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="hover:text-white hover:underline decoration-2 underline-offset-4">Privacy Policy</a>
-              <a href="#" className="hover:text-white hover:underline decoration-2 underline-offset-4">Terms of Service</a>
-              <a href="#" className="hover:text-white hover:underline decoration-2 underline-offset-4">Cookie Policy</a>
+              <a href="#" className="hover:text-[#fdfbf7] hover:underline decoration-2 underline-offset-4">Privacy Policy</a>
+              <a href="#" className="hover:text-[#fdfbf7] hover:underline decoration-2 underline-offset-4">Terms of Service</a>
+              <a href="#" className="hover:text-[#fdfbf7] hover:underline decoration-2 underline-offset-4">Cookie Policy</a>
             </div>
           </div>
         </div>
@@ -684,6 +686,7 @@ function AuthView({ navigate }: { navigate: (v: View) => void }) {
           education,
           country,
           matchedJobId: pendingJobId || null,
+          role: 'user',
           milestones: {
             discovery: !!pendingJobId,
             skills: false,
@@ -776,18 +779,18 @@ function AuthView({ navigate }: { navigate: (v: View) => void }) {
       exit={{ opacity: 0, y: -20 }}
       className="max-w-md mx-auto my-20 px-4 relative z-10"
     >
-      <div className="bg-white p-8 border-4 border-[#141414] shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] relative overflow-hidden">
+      <div className="bg-[#fdfbf7] p-8 border-4 border-[#1a3636] shadow-[8px_8px_0px_0px_rgba(13,27,27,1)] relative overflow-hidden">
         {/* Vintage noise overlay */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
         
         <div className="text-center mb-8 relative z-10">
-          <h2 className="text-3xl font-bold font-serif text-[#141414] mb-2 uppercase tracking-widest">{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
-          <div className="h-1 w-16 bg-[#141414] mx-auto mb-4"></div>
-          <p className="text-[#141414]/80 text-sm font-serif italic">{isLogin ? 'Login to track your progress' : 'Start your career journey today'}</p>
+          <h2 className="text-3xl font-bold font-serif text-[#1a3636] mb-2 uppercase tracking-widest">{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+          <div className="h-1 w-16 bg-[#1a3636] mx-auto mb-4"></div>
+          <p className="text-[#1a3636]/80 text-sm font-serif italic">{isLogin ? 'Login to track your progress' : 'Start your career journey today'}</p>
         </div>
 
-        {error && <div className="bg-white text-[#141414] p-3 text-xs mb-6 border-2 border-[#141414] font-bold tracking-wide shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">{error}</div>}
-        {message && <div className="bg-white text-[#141414] p-3 text-xs mb-6 border-2 border-[#141414] font-bold tracking-wide shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">{message}</div>}
+        {error && <div className="bg-[#fdfbf7] text-[#1a3636] p-3 text-xs mb-6 border-2 border-[#1a3636] font-bold tracking-wide shadow-[4px_4px_0px_0px_rgba(13,27,27,1)]">{error}</div>}
+        {message && <div className="bg-[#fdfbf7] text-[#1a3636] p-3 text-xs mb-6 border-2 border-[#1a3636] font-bold tracking-wide shadow-[4px_4px_0px_0px_rgba(13,27,27,1)]">{message}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
           {!isLogin && (
@@ -796,7 +799,7 @@ function AuthView({ navigate }: { navigate: (v: View) => void }) {
                 <input 
                   type="text" 
                   placeholder="Full Name" 
-                  className="w-full bg-white border-2 border-[#141414]/50 py-3 px-4 text-sm focus:outline-none focus:border-[#141414] transition-colors text-[#141414] placeholder-[#141414]/30 font-mono"
+                  className="w-full bg-[#fdfbf7] border-2 border-[#1a3636]/50 py-3 px-4 text-sm focus:outline-none focus:border-[#1a3636] transition-colors text-[#1a3636] placeholder-[#1a3636]/30 font-mono"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
@@ -804,7 +807,7 @@ function AuthView({ navigate }: { navigate: (v: View) => void }) {
                 <input 
                   type="text" 
                   placeholder="Username" 
-                  className="w-full bg-white border-2 border-[#141414]/50 py-3 px-4 text-sm focus:outline-none focus:border-[#141414] transition-colors text-[#141414] placeholder-[#141414]/30 font-mono"
+                  className="w-full bg-[#fdfbf7] border-2 border-[#1a3636]/50 py-3 px-4 text-sm focus:outline-none focus:border-[#1a3636] transition-colors text-[#1a3636] placeholder-[#1a3636]/30 font-mono"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
@@ -812,7 +815,7 @@ function AuthView({ navigate }: { navigate: (v: View) => void }) {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <select 
-                  className="w-full bg-white border-2 border-[#141414]/50 py-3 px-4 text-sm focus:outline-none focus:border-[#141414] transition-colors text-[#141414] font-mono appearance-none rounded-none"
+                  className="w-full bg-[#fdfbf7] border-2 border-[#1a3636]/50 py-3 px-4 text-sm focus:outline-none focus:border-[#1a3636] transition-colors text-[#1a3636] font-mono appearance-none rounded-none"
                   value={education}
                   onChange={(e) => setEducation(e.target.value)}
                 >
@@ -824,7 +827,7 @@ function AuthView({ navigate }: { navigate: (v: View) => void }) {
                 <input 
                   type="text" 
                   placeholder="Country" 
-                  className="w-full bg-white border-2 border-[#141414]/50 py-3 px-4 text-sm focus:outline-none focus:border-[#141414] transition-colors text-[#141414] placeholder-[#141414]/30 font-mono"
+                  className="w-full bg-[#fdfbf7] border-2 border-[#1a3636]/50 py-3 px-4 text-sm focus:outline-none focus:border-[#1a3636] transition-colors text-[#1a3636] placeholder-[#1a3636]/30 font-mono"
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                   required
@@ -835,7 +838,7 @@ function AuthView({ navigate }: { navigate: (v: View) => void }) {
           <input 
             type="email" 
             placeholder="Email Address" 
-            className="w-full bg-white border-2 border-[#141414]/50 py-3 px-4 text-sm focus:outline-none focus:border-[#141414] transition-colors text-[#141414] placeholder-[#141414]/30 font-mono"
+            className="w-full bg-[#fdfbf7] border-2 border-[#1a3636]/50 py-3 px-4 text-sm focus:outline-none focus:border-[#1a3636] transition-colors text-[#1a3636] placeholder-[#1a3636]/30 font-mono"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -843,7 +846,7 @@ function AuthView({ navigate }: { navigate: (v: View) => void }) {
           <input 
             type="password" 
             placeholder="Password" 
-            className="w-full bg-white border-2 border-[#141414]/50 py-3 px-4 text-sm focus:outline-none focus:border-[#141414] transition-colors text-[#141414] placeholder-[#141414]/30 font-mono"
+            className="w-full bg-[#fdfbf7] border-2 border-[#1a3636]/50 py-3 px-4 text-sm focus:outline-none focus:border-[#1a3636] transition-colors text-[#1a3636] placeholder-[#1a3636]/30 font-mono"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -851,7 +854,7 @@ function AuthView({ navigate }: { navigate: (v: View) => void }) {
           
           {isLogin && (
             <div className="flex justify-end">
-              <button type="button" onClick={handleResetPassword} className="text-xs font-bold text-[#141414]/50 hover:text-[#141414] hover:underline uppercase tracking-wider">
+              <button type="button" onClick={handleResetPassword} className="text-xs font-bold text-[#1a3636]/50 hover:text-[#1a3636] hover:underline uppercase tracking-wider">
                 Forgot Password?
               </button>
             </div>
@@ -860,29 +863,29 @@ function AuthView({ navigate }: { navigate: (v: View) => void }) {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full bg-[#141414] text-white py-4 border-2 border-[#141414] font-bold hover:bg-transparent hover:text-[#141414] transition-all shadow-[6px_6px_0px_0px_rgba(20,20,20,1)] disabled:opacity-50 uppercase tracking-widest mt-4"
+            className="w-full bg-[#1a3636] text-[#fdfbf7] py-4 border-2 border-[#1a3636] font-bold hover:bg-transparent hover:text-[#1a3636] transition-all shadow-[6px_6px_0px_0px_rgba(13,27,27,1)] disabled:opacity-50 uppercase tracking-widest mt-4"
           >
             {loading ? 'Processing...' : (isLogin ? 'Login' : 'Register')}
           </button>
         </form>
 
-        <div className="mt-6 flex items-center justify-center space-x-2 text-xs text-[#141414]/50 font-bold uppercase tracking-wider relative z-10">
+        <div className="mt-6 flex items-center justify-center space-x-2 text-xs text-[#1a3636]/50 font-bold uppercase tracking-wider relative z-10">
           <span>{isLogin ? "Don't have an account?" : "Already have an account?"}</span>
-          <button onClick={() => setIsLogin(!isLogin)} className="text-[#141414] font-bold hover:underline">
+          <button onClick={() => setIsLogin(!isLogin)} className="text-[#1a3636] font-bold hover:underline">
             {isLogin ? 'Register Now' : 'Login Now'}
           </button>
         </div>
 
         <div className="relative my-8 z-10">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t-2 border-[#141414]/20 border-dashed"></div></div>
-          <div className="relative flex justify-center text-xs uppercase tracking-widest font-bold"><span className="bg-white px-4 text-[#141414]/40">Or</span></div>
+          <div className="absolute inset-0 flex items-center"><div className="w-full border-t-2 border-[#1a3636]/20 border-dashed"></div></div>
+          <div className="relative flex justify-center text-xs uppercase tracking-widest font-bold"><span className="bg-[#fdfbf7] px-4 text-[#1a3636]/40">Or</span></div>
         </div>
 
         <div className="space-y-4 relative z-10">
           <button 
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className="w-full bg-transparent text-[#141414] border-2 border-[#141414] py-3 font-bold hover:bg-[#141414] hover:text-white transition-all flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] uppercase tracking-wider text-sm"
+            className="w-full bg-transparent text-[#1a3636] border-2 border-[#1a3636] py-3 font-bold hover:bg-[#1a3636] hover:text-[#fdfbf7] transition-all flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] uppercase tracking-wider text-sm"
           >
             <svg className="w-5 h-5 mr-3 grayscale brightness-0" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -896,7 +899,7 @@ function AuthView({ navigate }: { navigate: (v: View) => void }) {
           <button 
             onClick={handleGuest}
             disabled={loading}
-            className="w-full bg-transparent text-[#141414] border-2 border-[#141414] py-3 font-bold hover:bg-[#141414] hover:text-white transition-all flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] uppercase tracking-wider text-sm"
+            className="w-full bg-transparent text-[#1a3636] border-2 border-[#1a3636] py-3 font-bold hover:bg-[#1a3636] hover:text-[#fdfbf7] transition-all flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] uppercase tracking-wider text-sm"
           >
             Continue as Guest
           </button>
@@ -943,35 +946,35 @@ function QuizView({ navigate, user, profile, setProfile }: { navigate: (v: View)
       animate={{ opacity: 1, scale: 1 }} 
       className="max-w-2xl mx-auto my-20 px-4 relative z-10"
     >
-      <div className="bg-white p-10 border-2 border-[#141414] shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] relative overflow-hidden">
+      <div className="bg-[#fdfbf7] p-10 border-2 border-[#1a3636] shadow-[8px_8px_0px_0px_rgba(13,27,27,1)] relative overflow-hidden">
         {/* Vintage noise overlay */}
         <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
         
         <div className="mb-8 relative z-10">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-xs font-bold text-[#141414] uppercase tracking-widest">Step {step + 1} of {QUIZ_QUESTIONS.length}</span>
-            <span className="text-xs font-bold text-[#141414]/70 uppercase tracking-widest">{Math.round(((step + 1) / QUIZ_QUESTIONS.length) * 100)}% Complete</span>
+            <span className="text-xs font-bold text-[#1a3636] uppercase tracking-widest">Step {step + 1} of {QUIZ_QUESTIONS.length}</span>
+            <span className="text-xs font-bold text-[#1a3636]/70 uppercase tracking-widest">{Math.round(((step + 1) / QUIZ_QUESTIONS.length) * 100)}% Complete</span>
           </div>
-          <div className="w-full bg-white h-3 border-2 border-[#141414] overflow-hidden">
+          <div className="w-full bg-[#fdfbf7] h-3 border-2 border-[#1a3636] overflow-hidden">
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${((step + 1) / QUIZ_QUESTIONS.length) * 100}%` }}
-              className="bg-[#141414] h-full border-r-2 border-[#141414]"
+              className="bg-[#1a3636] h-full border-r-2 border-[#1a3636]"
             ></motion.div>
           </div>
         </div>
 
-        <h2 className="text-3xl font-bold font-serif text-[#141414] mb-8 relative z-10">{QUIZ_QUESTIONS[step].question}</h2>
+        <h2 className="text-3xl font-bold font-serif text-[#1a3636] mb-8 relative z-10">{QUIZ_QUESTIONS[step].question}</h2>
 
         <div className="space-y-4 relative z-10">
           {QUIZ_QUESTIONS[step].options.map((option, i) => (
             <button 
               key={i}
               onClick={() => handleAnswer(option.category)}
-              className="w-full text-left p-6 bg-white border-2 border-[#141414] hover:bg-[#141414] hover:text-white transition-all group flex justify-between items-center shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] hover:translate-y-[2px] hover:translate-x-[2px]"
+              className="w-full text-left p-6 bg-[#fdfbf7] border-2 border-[#1a3636] hover:bg-[#1a3636] hover:text-[#fdfbf7] transition-all group flex justify-between items-center shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] hover:shadow-[2px_2px_0px_0px_rgba(13,27,27,1)] hover:translate-y-[2px] hover:translate-x-[2px]"
             >
-              <span className="text-lg font-bold font-serif group-hover:text-white text-[#141414]">{option.text}</span>
-              <ChevronRight className="h-5 w-5 text-[#141414] group-hover:text-white group-hover:translate-x-1 transition-all" />
+              <span className="text-lg font-bold font-serif group-hover:text-[#fdfbf7] text-[#1a3636]">{option.text}</span>
+              <ChevronRight className="h-5 w-5 text-[#1a3636] group-hover:text-[#fdfbf7] group-hover:translate-x-1 transition-all" />
             </button>
           ))}
         </div>
@@ -991,43 +994,43 @@ function ResultsView({ navigate, profile }: { navigate: (v: View) => void, profi
       animate={{ opacity: 1, y: 0 }} 
       className="max-w-4xl mx-auto my-20 px-4 text-center relative z-10"
     >
-      <div className="bg-white p-12 border-2 border-[#141414] shadow-[12px_12px_0px_0px_rgba(20,20,20,1)] relative overflow-hidden">
+      <div className="bg-[#fdfbf7] p-12 border-2 border-[#1a3636] shadow-[12px_12px_0px_0px_rgba(13,27,27,1)] relative overflow-hidden">
         {/* Vintage noise overlay */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
         
-        <div className="absolute top-0 left-0 w-full h-3 bg-[#141414] border-b-2 border-[#141414]"></div>
+        <div className="absolute top-0 left-0 w-full h-3 bg-[#1a3636] border-b-2 border-[#1a3636]"></div>
         
-        <div className="mb-8 inline-flex items-center justify-center w-24 h-24 bg-white border-2 border-[#141414] rounded-full shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] relative z-10">
-          <Award className="h-12 w-12 text-[#141414]" />
+        <div className="mb-8 inline-flex items-center justify-center w-24 h-24 bg-[#fdfbf7] border-2 border-[#1a3636] rounded-full shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] relative z-10">
+          <Award className="h-12 w-12 text-[#1a3636]" />
         </div>
         
-        <h2 className="text-sm font-bold text-[#141414] uppercase tracking-[0.2em] mb-4 relative z-10">Your Perfect Match</h2>
-        <h1 className="text-5xl font-bold font-serif text-[#141414] mb-6 relative z-10 uppercase tracking-wide">{job.title}</h1>
-        <p className="text-xl text-[#141414]/80 max-w-2xl mx-auto mb-10 leading-relaxed font-serif italic relative z-10">
+        <h2 className="text-sm font-bold text-[#1a3636] uppercase tracking-[0.2em] mb-4 relative z-10">Your Perfect Match</h2>
+        <h1 className="text-5xl font-bold font-serif text-[#1a3636] mb-6 relative z-10 uppercase tracking-wide">{job.title}</h1>
+        <p className="text-xl text-[#1a3636]/80 max-w-2xl mx-auto mb-10 leading-relaxed font-serif italic relative z-10">
           {job.description}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 relative z-10">
-          <div className="p-6 bg-white border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">
-            <TrendingUp className="h-8 w-8 text-[#141414] mx-auto mb-4" />
-            <div className="text-xs font-bold text-[#141414]/70 uppercase tracking-widest mb-2">Salary Range</div>
-            <div className="font-bold text-xl text-[#141414] font-serif">{job.salary}</div>
+          <div className="p-6 bg-[#fdfbf7] border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)]">
+            <TrendingUp className="h-8 w-8 text-[#1a3636] mx-auto mb-4" />
+            <div className="text-xs font-bold text-[#1a3636]/70 uppercase tracking-widest mb-2">Salary Range</div>
+            <div className="font-bold text-xl text-[#1a3636] font-serif">{job.salary}</div>
           </div>
-          <div className="p-6 bg-white border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">
-            <BarChart3 className="h-8 w-8 text-[#141414] mx-auto mb-4" />
-            <div className="text-xs font-bold text-[#141414]/70 uppercase tracking-widest mb-2">Market Demand</div>
-            <div className="font-bold text-xl text-[#141414] font-serif">High Growth</div>
+          <div className="p-6 bg-[#fdfbf7] border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)]">
+            <BarChart3 className="h-8 w-8 text-[#1a3636] mx-auto mb-4" />
+            <div className="text-xs font-bold text-[#1a3636]/70 uppercase tracking-widest mb-2">Market Demand</div>
+            <div className="font-bold text-xl text-[#1a3636] font-serif">High Growth</div>
           </div>
-          <div className="p-6 bg-white border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">
-            <Clock className="h-8 w-8 text-[#141414] mx-auto mb-4" />
-            <div className="text-xs font-bold text-[#141414]/70 uppercase tracking-widest mb-2">Time to Hire</div>
-            <div className="font-bold text-xl text-[#141414] font-serif">6 Months</div>
+          <div className="p-6 bg-[#fdfbf7] border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)]">
+            <Clock className="h-8 w-8 text-[#1a3636] mx-auto mb-4" />
+            <div className="text-xs font-bold text-[#1a3636]/70 uppercase tracking-widest mb-2">Time to Hire</div>
+            <div className="font-bold text-xl text-[#1a3636] font-serif">6 Months</div>
           </div>
         </div>
 
         <button 
           onClick={() => navigate('dashboard')}
-          className="bg-[#141414] text-white px-12 py-5 border-2 border-[#141414] text-lg font-bold hover:bg-[#141414]/90 transition-all shadow-[6px_6px_0px_0px_rgba(20,20,20,1)] flex items-center justify-center mx-auto group uppercase tracking-widest relative z-10"
+          className="bg-[#1a3636] text-[#fdfbf7] px-12 py-5 border-2 border-[#1a3636] text-lg font-bold hover:bg-[#1a3636]/90 transition-all shadow-[6px_6px_0px_0px_rgba(13,27,27,1)] flex items-center justify-center mx-auto group uppercase tracking-widest relative z-10"
         >
           View Your Roadmap <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
         </button>
