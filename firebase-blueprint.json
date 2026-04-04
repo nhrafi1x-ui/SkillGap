@@ -1,0 +1,80 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "User's career profile and progress data.",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string" },
+        "username": { "type": "string" },
+        "education": { "type": "string" },
+        "country": { "type": "string" },
+        "currentRole": { "type": "string" },
+        "interests": { "type": "string" },
+        "careerPlan": { "type": "string" },
+        "matchedJobId": { "type": "string" },
+        "milestones": {
+          "type": "object",
+          "properties": {
+            "discovery": { "type": "boolean" },
+            "skills": { "type": "boolean" },
+            "projects": { "type": "boolean" },
+            "docs": { "type": "boolean" },
+            "apply": { "type": "boolean" },
+            "hired": { "type": "boolean" }
+          }
+        },
+        "cvLink": { "type": "string" },
+        "points": { "type": "integer" },
+        "badges": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "quizResults": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "profileImage": { "type": "string" }
+      },
+      "required": ["fullName", "username", "milestones"]
+    },
+    "Todo": {
+      "title": "Todo",
+      "description": "A task for the user to complete.",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" },
+        "priority": { "type": "string", "enum": ["High", "Medium", "Low"] },
+        "completed": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["text", "priority", "completed", "createdAt"]
+    },
+    "Application": {
+      "title": "Application",
+      "description": "A job application tracked by the user.",
+      "type": "object",
+      "properties": {
+        "company": { "type": "string" },
+        "role": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["Applied", "Interview", "Offer", "Rejected"] }
+      },
+      "required": ["company", "role", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User's profile document."
+    },
+    "/users/{userId}/todos/{todoId}": {
+      "schema": "Todo",
+      "description": "User's todo list."
+    },
+    "/users/{userId}/applications/{appId}": {
+      "schema": "Application",
+      "description": "User's job applications."
+    }
+  }
+}
