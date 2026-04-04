@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { View, UserProfile, Todo, Application, OperationType } from '../types';
 import { CAREER_DIRECTORY } from '../data';
 import { db } from '../firebase';
-import { collection, doc, query, where, onSnapshot, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, doc, query, where, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { handleFirestoreError } from '../utils/error';
 
 export function DashboardView({ navigate, user, profile, setProfile }: { navigate: (v: View) => void, user: any, profile: UserProfile | null, setProfile: any }) {
@@ -26,9 +26,13 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
     if (!user) return;
     
     const todosQuery = query(collection(db, 'users', user.uid, 'todos'), where('text', '!=', '')); // Dummy where to satisfy query if needed, or just collection
-    const unsubscribeTodos = onSnapshot(collection(db, 'users', user.uid, 'todos'), (snapshot) => {
+      const unsubscribeTodos = onSnapshot(collection(db, 'users', user.uid, 'todos'), (snapshot) => {
       const loadedTodos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Todo));
-      setTodos(loadedTodos.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      setTodos(loadedTodos.sort((a, b) => {
+        const dateA = a.createdAt?.toDate?.() || (a.createdAt ? new Date(a.createdAt) : new Date());
+        const dateB = b.createdAt?.toDate?.() || (b.createdAt ? new Date(b.createdAt) : new Date());
+        return dateB.getTime() - dateA.getTime();
+      }));
     }, (error) => handleFirestoreError(error, OperationType.LIST, `users/${user.uid}/todos`, user));
 
     const unsubscribeApps = onSnapshot(collection(db, 'users', user.uid, 'applications'), (snapshot) => {
@@ -106,7 +110,7 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
         text: newTodo,
         priority: newTodoPriority,
         completed: false,
-        createdAt: new Date().toISOString()
+        createdAt: serverTimestamp()
       };
       
       await addDoc(collection(db, 'users', user.uid, 'todos'), todoData);
@@ -201,22 +205,22 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-bold font-serif tracking-tight text-[#141414] mb-2 uppercase">Welcome back, {profile?.fullName || 'Explorer'}</h1>
-          <p className="text-[#141414]/70 font-serif italic">You're on your way to becoming a <span className="text-[#141414] font-bold not-italic underline decoration-2 underline-offset-4">{job.title}</span>.</p>
+          <h1 className="text-4xl font-bold font-serif tracking-tight text-[#1a3636] mb-2 uppercase">Welcome back, {profile?.fullName || 'Explorer'}</h1>
+          <p className="text-[#1a3636]/70 font-serif italic">You're on your way to becoming a <span className="text-[#1a3636] font-bold not-italic underline decoration-2 underline-offset-4">{job.title}</span>.</p>
         </div>
         <div className="flex items-center space-x-4">
           <div className="text-right hidden sm:block">
-            <div className="text-xs font-bold text-[#141414]/50 uppercase tracking-widest mb-1">Points</div>
-            <div className="text-lg font-bold text-[#141414]">{profile?.points || 0} XP</div>
+            <div className="text-xs font-bold text-[#1a3636]/50 uppercase tracking-widest mb-1">Points</div>
+            <div className="text-lg font-bold text-[#1a3636]">{profile?.points || 0} XP</div>
           </div>
           <div className="text-right hidden sm:block">
-            <div className="text-xs font-bold text-[#141414]/50 uppercase tracking-widest mb-1">Overall Progress</div>
-            <div className="text-lg font-bold text-[#141414]">{Math.round((Object.values(profile?.milestones || {}).filter(Boolean).length / 6) * 100)}%</div>
+            <div className="text-xs font-bold text-[#1a3636]/50 uppercase tracking-widest mb-1">Overall Progress</div>
+            <div className="text-lg font-bold text-[#1a3636]">{Math.round((Object.values(profile?.milestones || {}).filter(Boolean).length / 6) * 100)}%</div>
           </div>
-          <div className="w-16 h-16 rounded-none bg-white flex items-center justify-center border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] relative">
-            <TrendingUp className="text-[#141414] h-8 w-8" />
+          <div className="w-16 h-16 rounded-none bg-[#fdfbf7] flex items-center justify-center border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] relative">
+            <TrendingUp className="text-[#1a3636] h-8 w-8" />
             {profile?.badges && profile.badges.length > 0 && (
-              <div className="absolute -top-2 -right-2 bg-[#141414] text-white text-[10px] font-bold px-2 py-1 rounded-none border border-[#141414]">
+              <div className="absolute -top-2 -right-2 bg-[#d95d39] text-[#fdfbf7] text-[10px] font-bold px-2 py-1 rounded-none border border-[#1a3636]">
                 {profile.badges.length}
               </div>
             )}
@@ -225,10 +229,10 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
       </div>
 
       {/* Heartbeat Roadmap */}
-      <section className="bg-white p-8 md:p-12 rounded-none shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] border-4 border-[#141414] mb-12 overflow-hidden relative text-[#141414]">
+      <section className="bg-[#fdfbf7] p-8 md:p-12 rounded-none shadow-[8px_8px_0px_0px_rgba(13,27,27,1)] border-4 border-[#1a3636] mb-12 overflow-hidden relative text-[#1a3636]">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
-        <h2 className="text-2xl font-bold font-serif tracking-tight mb-8 flex items-center text-[#141414] uppercase">
-          <Award className="h-6 w-6 mr-2 text-[#141414]" /> 6-Month Heartbeat Roadmap
+        <h2 className="text-2xl font-bold font-serif tracking-tight mb-8 flex items-center text-[#1a3636] uppercase">
+          <Award className="h-6 w-6 mr-2 text-[#d95d39]" /> 6-Month Heartbeat Roadmap
         </h2>
         
         <div className="relative h-64 md:h-80 w-full mb-12">
@@ -237,7 +241,7 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
             <motion.path 
               d="M0,250 L100,250 L130,100 L160,280 L190,250 L300,200 L330,50 L360,230 L390,200 L500,150 L530,20 L560,200 L590,150 L700,100 L730,10 L760,150 L790,100 L900,50 L1000,50"
               fill="none"
-              stroke="#141414"
+              stroke="#1a3636"
               strokeOpacity="0.2"
               strokeWidth="4"
               strokeLinecap="round"
@@ -248,7 +252,7 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
               transition={{ duration: 2, ease: "easeInOut" }}
               d="M0,250 L100,250 L130,100 L160,280 L190,250 L300,200 L330,50 L360,230 L390,200 L500,150 L530,20 L560,200 L590,150 L700,100 L730,10 L760,150 L790,100 L900,50 L1000,50"
               fill="none"
-              stroke="#141414"
+              stroke="#1a3636"
               strokeWidth="4"
               strokeLinecap="round"
               className="opacity-50"
@@ -264,8 +268,8 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
                 <g key={m.key} className="cursor-pointer" onClick={() => toggleMilestone(m.key)}>
                   <motion.circle 
                     cx={x} cy={y} r="12"
-                    fill={isDone ? "#141414" : "white"}
-                    stroke="#141414"
+                    fill={isDone ? "#d95d39" : "#fdfbf7"}
+                    stroke="#1a3636"
                     strokeWidth="4"
                     whileHover={{ scale: 1.2 }}
                   />
@@ -273,11 +277,11 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
                     <motion.path 
                       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                       d={`M${x-4},${y} L${x-1},${y+3} L${x+4},${y-3}`}
-                      fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"
+                      fill="none" stroke="#fdfbf7" strokeWidth="2" strokeLinecap="round"
                     />
                   )}
-                  <text x={x} y={y + 35} textAnchor="middle" className="text-[10px] font-bold fill-[#141414]/70 uppercase tracking-widest">{m.time}</text>
-                  <text x={x} y={y - 25} textAnchor="middle" className={`text-xs font-bold ${isDone ? 'fill-[#141414]' : 'fill-[#141414]/50'}`}>{m.label}</text>
+                  <text x={x} y={y + 35} textAnchor="middle" className="text-[10px] font-bold fill-[#1a3636]/70 uppercase tracking-widest">{m.time}</text>
+                  <text x={x} y={y - 25} textAnchor="middle" className={`text-xs font-bold ${isDone ? 'fill-[#1a3636]' : 'fill-[#1a3636]/50'}`}>{m.label}</text>
                 </g>
               );
             })}
@@ -289,7 +293,7 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
             <div 
               key={m.key} 
               onClick={() => toggleMilestone(m.key)}
-              className={`p-4 rounded-none border-2 transition-all cursor-pointer ${profile?.milestones[m.key] ? 'bg-[#141414] border-[#141414] text-white shadow-[2px_2px_0px_0px_rgba(20,20,20,0.5)]' : 'bg-transparent border-[#141414]/30 text-[#141414] hover:border-[#141414] hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,0.2)]'}`}
+              className={`p-4 rounded-none border-2 transition-all cursor-pointer ${profile?.milestones[m.key] ? 'bg-[#1a3636] border-[#1a3636] text-[#fdfbf7] shadow-[2px_2px_0px_0px_rgba(13,27,27,0.5)]' : 'bg-transparent border-[#1a3636]/30 text-[#1a3636] hover:border-[#1a3636] hover:shadow-[2px_2px_0px_0px_rgba(13,27,27,0.2)]'}`}
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-bold opacity-70 uppercase tracking-widest">{m.time}</span>
@@ -306,11 +310,11 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
         {/* Left Column: Resources & Tracker */}
         <div className="lg:col-span-2 space-y-12">
           {/* Skill Marathon */}
-          <section className="bg-white p-8 rounded-none shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] border-4 border-[#141414] mb-12 relative overflow-hidden text-[#141414]">
+          <section className="bg-[#fdfbf7] p-8 rounded-none shadow-[8px_8px_0px_0px_rgba(13,27,27,1)] border-4 border-[#1a3636] mb-12 relative overflow-hidden text-[#1a3636]">
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
             <div className="flex items-center justify-between mb-6 relative z-10">
-              <h2 className="text-2xl font-bold font-serif tracking-tight flex items-center text-[#141414] uppercase"><BookOpen className="h-6 w-6 mr-2 text-[#141414]" /> Skill Marathon</h2>
-              <button onClick={() => navigate('directory')} className="text-xs font-bold text-[#141414] hover:underline uppercase tracking-widest">View All Resources</button>
+              <h2 className="text-2xl font-bold font-serif tracking-tight flex items-center text-[#1a3636] uppercase"><BookOpen className="h-6 w-6 mr-2 text-[#708d81]" /> Skill Marathon</h2>
+              <button onClick={() => navigate('directory')} className="text-xs font-bold text-[#1a3636] hover:underline uppercase tracking-widest">View All Resources</button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
               {job.resources.map((res, i) => (
@@ -319,10 +323,10 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
                   href={res.url} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="p-5 bg-white rounded-none border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:shadow-[6px_6px_0px_0px_rgba(20,20,20,1)] transition-all flex items-center group relative overflow-hidden text-[#141414]"
+                  className="p-5 bg-[#fdfbf7] rounded-none border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] hover:shadow-[6px_6px_0px_0px_rgba(13,27,27,1)] transition-all flex items-center group relative overflow-hidden text-[#1a3636]"
                 >
-                  <div className="bg-[#141414] p-3 rounded-none border border-[#141414]/30 mr-4 group-hover:bg-white transition-colors">
-                    <Globe className="h-5 w-5 text-white group-hover:text-[#141414]" />
+                  <div className="bg-[#1a3636] p-3 rounded-none border border-[#1a3636]/30 mr-4 group-hover:bg-[#fdfbf7] transition-colors">
+                    <Globe className="h-5 w-5 text-[#fdfbf7] group-hover:text-[#1a3636]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-bold truncate uppercase">{res.title}</div>
@@ -335,21 +339,21 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
           </section>
 
           {/* Application Tracker */}
-          <section className="bg-white p-8 rounded-none shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] border-4 border-[#141414] mb-12 relative overflow-hidden text-[#141414]">
+          <section className="bg-[#fdfbf7] p-8 rounded-none shadow-[8px_8px_0px_0px_rgba(13,27,27,1)] border-4 border-[#1a3636] mb-12 relative overflow-hidden text-[#1a3636]">
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
             <div className="flex items-center justify-between mb-6 relative z-10">
-              <h2 className="text-2xl font-bold font-serif tracking-tight flex items-center text-[#141414] uppercase"><Briefcase className="h-6 w-6 mr-2 text-[#141414]" /> Application Tracker</h2>
-              <button onClick={() => setShowAppForm(!showAppForm)} className="flex items-center text-xs font-bold bg-[#141414] text-white px-4 py-2 rounded-none border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] transition-all uppercase tracking-widest">
+              <h2 className="text-2xl font-bold font-serif tracking-tight flex items-center text-[#1a3636] uppercase"><Briefcase className="h-6 w-6 mr-2 text-[#d95d39]" /> Application Tracker</h2>
+              <button onClick={() => setShowAppForm(!showAppForm)} className="flex items-center text-xs font-bold bg-[#1a3636] text-[#fdfbf7] px-4 py-2 rounded-none border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(13,27,27,1)] transition-all uppercase tracking-widest">
                 {showAppForm ? 'Cancel' : <><Plus className="h-4 w-4 mr-1" /> Add Job</>}
               </button>
             </div>
             
             {showAppForm && (
-              <form onSubmit={addApplication} className="mb-6 bg-white p-4 rounded-none border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] flex flex-col sm:flex-row gap-3 relative z-10">
+              <form onSubmit={addApplication} className="mb-6 bg-[#fdfbf7] p-4 rounded-none border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] flex flex-col sm:flex-row gap-3 relative z-10">
                 <input 
                   type="text" 
                   placeholder="Company Name" 
-                  className="flex-1 bg-white border-2 border-[#141414]/30 rounded-none py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#141414] font-mono text-[#141414]"
+                  className="flex-1 bg-[#fdfbf7] border-2 border-[#1a3636]/30 rounded-none py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3636] font-mono text-[#1a3636]"
                   value={newAppCompany}
                   onChange={(e) => setNewAppCompany(e.target.value)}
                   required
@@ -357,63 +361,63 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
                 <input 
                   type="text" 
                   placeholder="Role" 
-                  className="flex-1 bg-white border-2 border-[#141414]/30 rounded-none py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#141414] font-mono text-[#141414]"
+                  className="flex-1 bg-[#fdfbf7] border-2 border-[#1a3636]/30 rounded-none py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3636] font-mono text-[#1a3636]"
                   value={newAppRole}
                   onChange={(e) => setNewAppRole(e.target.value)}
                   required
                 />
                 <input 
                   type="date" 
-                  className="w-full sm:w-auto bg-white border-2 border-[#141414]/30 rounded-none py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#141414] font-mono text-[#141414]"
+                  className="w-full sm:w-auto bg-[#fdfbf7] border-2 border-[#1a3636]/30 rounded-none py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3636] font-mono text-[#1a3636]"
                   value={newAppDate}
                   onChange={(e) => setNewAppDate(e.target.value)}
                   required
                 />
-                <button type="submit" className="bg-[#141414] text-white px-6 py-2 rounded-none font-bold text-sm border-2 border-[#141414] hover:bg-[#1A1A1A] transition-colors uppercase tracking-widest">
+                <button type="submit" className="bg-[#1a3636] text-[#fdfbf7] px-6 py-2 rounded-none font-bold text-sm border-2 border-[#1a3636] hover:bg-[#1a3636]/90 transition-colors uppercase tracking-widest">
                   Save
                 </button>
               </form>
             )}
 
-            <div className="bg-white rounded-none border-2 border-[#141414] shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] overflow-hidden relative z-10">
+            <div className="bg-[#fdfbf7] rounded-none border-2 border-[#1a3636] shadow-[8px_8px_0px_0px_rgba(13,27,27,1)] overflow-hidden relative z-10">
               <table className="w-full text-left border-collapse relative z-10">
                 <thead>
-                  <tr className="bg-white border-b-2 border-[#141414]">
-                    <th className="px-6 py-4 text-[10px] font-bold text-[#141414]/70 uppercase tracking-widest">Date</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-[#141414]/70 uppercase tracking-widest">Company</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-[#141414]/70 uppercase tracking-widest">Role</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-[#141414]/70 uppercase tracking-widest">Status</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-[#141414]/70 uppercase tracking-widest text-right">Action</th>
+                  <tr className="bg-[#fdfbf7] border-b-2 border-[#1a3636]">
+                    <th className="px-6 py-4 text-[10px] font-bold text-[#1a3636]/70 uppercase tracking-widest">Date</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-[#1a3636]/70 uppercase tracking-widest">Company</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-[#1a3636]/70 uppercase tracking-widest">Role</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-[#1a3636]/70 uppercase tracking-widest">Status</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-[#1a3636]/70 uppercase tracking-widest text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y-2 divide-[#141414]/10">
+                <tbody className="divide-y-2 divide-[#1a3636]/10">
                   {applications.length > 0 ? applications.map((app) => (
-                    <tr key={app.id} className="hover:bg-[#141414]/5 transition-colors">
-                      <td className="px-6 py-4 text-[#141414]/70 text-sm font-mono">{app.date || 'N/A'}</td>
-                      <td className="px-6 py-4 font-bold text-[#141414] text-sm uppercase">{app.company}</td>
-                      <td className="px-6 py-4 text-[#141414]/70 text-sm font-serif italic">{app.role}</td>
+                    <tr key={app.id} className="hover:bg-[#1a3636]/5 transition-colors">
+                      <td className="px-6 py-4 text-[#1a3636]/70 text-sm font-mono">{app.date || 'N/A'}</td>
+                      <td className="px-6 py-4 font-bold text-[#1a3636] text-sm uppercase">{app.company}</td>
+                      <td className="px-6 py-4 text-[#1a3636]/70 text-sm font-serif italic">{app.role}</td>
                       <td className="px-6 py-4">
                         <button 
                           onClick={() => cycleStatus(app.id, app.status)}
                           className={`px-3 py-1 rounded-none text-[10px] font-bold uppercase tracking-wider border-2 ${
-                            app.status === 'Offer' ? 'bg-[#141414] text-white border-[#141414]' :
-                            app.status === 'Interview' ? 'bg-white text-[#141414] border-[#141414]' :
-                            app.status === 'Rejected' ? 'bg-transparent text-[#141414]/50 border-[#141414] border-dashed' :
-                            'bg-transparent text-[#141414]/50 border-[#141414]/20'
+                            app.status === 'Offer' ? 'bg-[#1a3636] text-[#fdfbf7] border-[#1a3636]' :
+                            app.status === 'Interview' ? 'bg-[#fdfbf7] text-[#1a3636] border-[#1a3636]' :
+                            app.status === 'Rejected' ? 'bg-transparent text-[#1a3636]/50 border-[#1a3636] border-dashed' :
+                            'bg-transparent text-[#1a3636]/50 border-[#1a3636]/20'
                           }`}
                         >
                           {app.status}
                         </button>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button onClick={() => deleteApplication(app.id)} className="text-[#141414]/30 hover:text-[#141414] transition-colors">
+                        <button onClick={() => deleteApplication(app.id)} className="text-[#1a3636]/30 hover:text-[#1a3636] transition-colors">
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </td>
                     </tr>
                   )) : (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-[#141414]/50 text-sm font-serif italic">No applications tracked yet. Start applying!</td>
+                      <td colSpan={5} className="px-6 py-12 text-center text-[#1a3636]/50 text-sm font-serif italic">No applications tracked yet. Start applying!</td>
                     </tr>
                   )}
                 </tbody>
@@ -424,15 +428,15 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
 
         {/* Right Column: Todo List */}
         <div className="space-y-12">
-          <section className="bg-white p-8 rounded-none shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] border-4 border-[#141414] relative text-[#141414]">
+          <section className="bg-[#fdfbf7] p-8 rounded-none shadow-[8px_8px_0px_0px_rgba(13,27,27,1)] border-4 border-[#1a3636] relative text-[#1a3636]">
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
-            <h2 className="text-2xl font-bold font-serif tracking-tight mb-6 flex items-center text-[#141414] uppercase relative z-10"><Layout className="h-6 w-6 mr-2 text-[#141414]" /> Daily Tasks</h2>
+            <h2 className="text-2xl font-bold font-serif tracking-tight mb-6 flex items-center text-[#1a3636] uppercase relative z-10"><Layout className="h-6 w-6 mr-2 text-[#708d81]" /> Daily Tasks</h2>
             
             <form onSubmit={addTodo} className="mb-6 space-y-3 relative z-10">
               <input 
                 type="text" 
                 placeholder="What needs to be done?" 
-                className="w-full bg-white border-2 border-[#141414]/30 rounded-none py-3 px-4 text-sm focus:outline-none focus:border-[#141414] font-mono text-[#141414] placeholder:text-[#141414]/30"
+                className="w-full bg-[#fdfbf7] border-2 border-[#1a3636]/30 rounded-none py-3 px-4 text-sm focus:outline-none focus:border-[#1a3636] font-mono text-[#1a3636] placeholder:text-[#1a3636]/30"
                 value={newTodo}
                 onChange={(e) => setNewTodo(e.target.value)}
               />
@@ -443,51 +447,51 @@ export function DashboardView({ navigate, user, profile, setProfile }: { navigat
                     type="button"
                     onClick={() => setNewTodoPriority(p)}
                     className={`flex-1 py-2 rounded-none text-[10px] font-bold uppercase tracking-widest border-2 transition-all ${
-                      newTodoPriority === p ? 'bg-[#141414] text-white border-[#141414]' : 'bg-transparent text-[#141414]/50 border-[#141414]/20 hover:border-[#141414]'
+                      newTodoPriority === p ? 'bg-[#1a3636] text-[#fdfbf7] border-[#1a3636]' : 'bg-transparent text-[#1a3636]/50 border-[#1a3636]/20 hover:border-[#1a3636]'
                     }`}
                   >
                     {p}
                   </button>
                 ))}
               </div>
-              <button type="submit" className="w-full bg-[#141414] text-white py-3 rounded-none font-bold border-2 border-[#141414] hover:bg-transparent hover:text-[#141414] transition-all flex items-center justify-center uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]">
+              <button type="submit" className="w-full bg-[#1a3636] text-[#fdfbf7] py-3 rounded-none font-bold border-2 border-[#1a3636] hover:bg-transparent hover:text-[#1a3636] transition-all flex items-center justify-center uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(13,27,27,1)]">
                 <Plus className="h-4 w-4 mr-1" /> Add Task
               </button>
             </form>
 
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 relative z-10">
               {todos.length > 0 ? todos.map((todo) => (
-                <div key={todo.id} className="group flex items-center p-4 bg-white rounded-none border-2 border-[#141414]/20 hover:border-[#141414] hover:shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] transition-all">
+                <div key={todo.id} className="group flex items-center p-4 bg-[#fdfbf7] rounded-none border-2 border-[#1a3636]/20 hover:border-[#1a3636] hover:shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] transition-all">
                   <button onClick={() => toggleTodo(todo.id, todo.completed)} className="mr-3 shrink-0">
-                    {todo.completed ? <CheckCircle2 className="h-5 w-5 text-[#141414]" /> : <Circle className="h-5 w-5 text-[#141414]/30" />}
+                    {todo.completed ? <CheckCircle2 className="h-5 w-5 text-[#1a3636]" /> : <Circle className="h-5 w-5 text-[#1a3636]/30" />}
                   </button>
                   <div className="flex-1 min-w-0">
-                    <div className={`text-sm font-medium truncate ${todo.completed ? 'text-[#141414]/40 line-through italic' : 'text-[#141414] font-serif'}`}>{todo.text}</div>
-                    <div className={`text-[8px] font-bold uppercase tracking-widest mt-1 text-[#141414]/50`}>
+                    <div className={`text-sm font-medium truncate ${todo.completed ? 'text-[#1a3636]/40 line-through italic' : 'text-[#1a3636] font-serif'}`}>{todo.text}</div>
+                    <div className={`text-[8px] font-bold uppercase tracking-widest mt-1 text-[#1a3636]/50`}>
                       {todo.priority} Priority
                     </div>
                   </div>
-                  <button onClick={() => deleteTodo(todo.id)} className="ml-2 text-[#141414]/30 hover:text-[#141414] opacity-0 group-hover:opacity-100 transition-all">
+                  <button onClick={() => deleteTodo(todo.id)} className="ml-2 text-[#1a3636]/30 hover:text-[#1a3636] opacity-0 group-hover:opacity-100 transition-all">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               )) : (
-                <div className="text-center py-8 text-[#141414]/50 text-xs font-serif italic">All caught up! Add a task to stay productive.</div>
+                <div className="text-center py-8 text-[#1a3636]/50 text-xs font-serif italic">All caught up! Add a task to stay productive.</div>
               )}
             </div>
           </section>
 
           {/* Project Ideas */}
-          <section className="bg-white text-[#141414] p-8 rounded-none shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] border-4 border-[#141414] relative">
+          <section className="bg-[#fdfbf7] text-[#1a3636] p-8 rounded-none shadow-[8px_8px_0px_0px_rgba(13,27,27,1)] border-4 border-[#1a3636] relative">
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
-            <h2 className="text-xl font-bold font-serif tracking-tight mb-6 flex items-center uppercase relative z-10 text-[#141414]"><Cpu className="h-5 w-5 mr-2 text-[#141414]" /> Suggested Projects</h2>
+            <h2 className="text-xl font-bold font-serif tracking-tight mb-6 flex items-center uppercase relative z-10 text-[#1a3636]"><Cpu className="h-5 w-5 mr-2 text-[#708d81]" /> Suggested Projects</h2>
             <div className="space-y-6 relative z-10">
               {job.projects.map((proj, i) => (
-                <div key={i} className="relative pl-6 border-l-2 border-[#141414]/30">
-                  <div className="absolute left-[-5px] top-0 w-2 h-2 rounded-none bg-[#141414]"></div>
-                  <h4 className="text-sm font-bold mb-1 uppercase tracking-tight text-[#141414]">{proj.title}</h4>
-                  <p className="text-xs text-[#141414]/80 mb-3 leading-relaxed font-serif italic">{proj.description}</p>
-                  <a href={proj.url} target="_blank" rel="noreferrer" className="inline-flex items-center text-[10px] font-bold text-[#141414] hover:text-[#141414]/70 underline decoration-1 underline-offset-2 uppercase tracking-widest">
+                <div key={i} className="relative pl-6 border-l-2 border-[#1a3636]/30">
+                  <div className="absolute left-[-5px] top-0 w-2 h-2 rounded-none bg-[#1a3636]"></div>
+                  <h4 className="text-sm font-bold mb-1 uppercase tracking-tight text-[#1a3636]">{proj.title}</h4>
+                  <p className="text-xs text-[#1a3636]/80 mb-3 leading-relaxed font-serif italic">{proj.description}</p>
+                  <a href={proj.url} target="_blank" rel="noreferrer" className="inline-flex items-center text-[10px] font-bold text-[#1a3636] hover:text-[#1a3636]/70 underline decoration-1 underline-offset-2 uppercase tracking-widest">
                     View Guide <ExternalLink className="h-3 w-3 ml-1" />
                   </a>
                 </div>
