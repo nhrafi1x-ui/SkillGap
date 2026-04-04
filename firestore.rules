@@ -22,6 +22,7 @@ service cloud.firestore {
     //   - badges: list
     //   - quizResults: map
     //   - profileImage: string
+    //   - role: string (admin/user)
     //
     // Collection: users/{userId}/todos
     // Document ID: {todoId}
@@ -88,22 +89,24 @@ service cloud.firestore {
     // ===============================================================
 
     match /users/{userId} {
-      allow read: if request.auth.uid == userId || isAdmin();
-      allow create: if request.auth.uid == userId && isValidUser(request.resource.data) && !('role' in request.resource.data);
-      allow update: if (request.auth.uid == userId && isValidUser(request.resource.data) && (request.resource.data.role == resource.data.role || !('role' in resource.data))) || isAdmin();
+      // Allow read/write for owner or admin
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data) && !('role' in request.resource.data);
+      allow update: if (isOwner(userId) && isValidUser(request.resource.data) && (request.resource.data.get('role', 'user') == resource.data.get('role', 'user'))) || isAdmin();
       
+      // Subcollections
+      match /{document=**} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId) || isAdmin();
+      }
+
+      // Explicit validation for subcollections if needed (though write covers it, validation is better)
       match /todos/{todoId} {
-        allow read: if request.auth.uid == userId || isAdmin();
-        allow create: if request.auth.uid == userId && isValidTodo(request.resource.data);
-        allow update: if request.auth.uid == userId && isValidTodo(request.resource.data);
-        allow delete: if request.auth.uid == userId || isAdmin();
+        allow create, update: if isOwner(userId) && isValidTodo(request.resource.data);
       }
 
       match /applications/{appId} {
-        allow read: if request.auth.uid == userId || isAdmin();
-        allow create: if request.auth.uid == userId && isValidApplication(request.resource.data);
-        allow update: if request.auth.uid == userId && isValidApplication(request.resource.data);
-        allow delete: if request.auth.uid == userId || isAdmin();
+        allow create, update: if isOwner(userId) && isValidApplication(request.resource.data);
       }
     }
 
