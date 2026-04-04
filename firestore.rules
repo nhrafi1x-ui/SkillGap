@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId}
+    // Fields:
+    //   - fullName: string (required)
+    //   - username: string (required)
+    //   - education: string
+    //   - country: string
+    //   - currentRole: string
+    //   - interests: string
+    //   - careerPlan: string
+    //   - matchedJobId: string
+    //   - milestones: map (required)
+    //   - cvLink: string
+    //   - points: number
+    //   - badges: list
+    //   - quizResults: map
+    //   - profileImage: string
+    //
+    // Collection: users/{userId}/todos
+    // Document ID: {todoId}
+    // Fields:
+    //   - text: string (required)
+    //   - priority: string (required, enum: ["High", "Medium", "Low"])
+    //   - completed: bool (required)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: users/{userId}/applications
+    // Document ID: {appId}
+    // Fields:
+    //   - company: string (required)
+    //   - role: string (required)
+    //   - date: string (format: YYYY-MM-DD)
+    //   - status: string (required, enum: ["Applied", "Interview", "Offer", "Rejected"])
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        ((request.auth.token.email == "nhrafi1x@gmail.com" && request.auth.token.email_verified == true) ||
+         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') == 'admin'));
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['fullName', 'username', 'milestones']) &&
+             data.fullName is string && data.fullName.size() > 0 && data.fullName.size() < 100 &&
+             data.username is string && data.username.size() > 0 && data.username.size() < 50 &&
+             data.milestones is map;
+    }
+
+    function isValidTodo(data) {
+      return data.keys().hasAll(['text', 'priority', 'completed', 'createdAt']) &&
+             data.text is string && data.text.size() > 0 && data.text.size() < 500 &&
+             data.priority in ['High', 'Medium', 'Low'] &&
+             data.completed is bool &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidApplication(data) {
+      return data.keys().hasAll(['company', 'role', 'status']) &&
+             data.company is string && data.company.size() > 0 && data.company.size() < 100 &&
+             data.role is string && data.role.size() > 0 && data.role.size() < 100 &&
+             data.status in ['Applied', 'Interview', 'Offer', 'Rejected'] &&
+             (!('date' in data) || (data.date is string && data.date.matches("^\\d{4}-\\d{2}-\\d{2}$")));
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if request.auth.uid == userId || isAdmin();
+      allow create: if request.auth.uid == userId && isValidUser(request.resource.data) && !('role' in request.resource.data);
+      allow update: if (request.auth.uid == userId && isValidUser(request.resource.data) && (request.resource.data.role == resource.data.role || !('role' in resource.data))) || isAdmin();
+      
+      match /todos/{todoId} {
+        allow read: if request.auth.uid == userId || isAdmin();
+        allow create: if request.auth.uid == userId && isValidTodo(request.resource.data);
+        allow update: if request.auth.uid == userId && isValidTodo(request.resource.data);
+        allow delete: if request.auth.uid == userId || isAdmin();
+      }
+
+      match /applications/{appId} {
+        allow read: if request.auth.uid == userId || isAdmin();
+        allow create: if request.auth.uid == userId && isValidApplication(request.resource.data);
+        allow update: if request.auth.uid == userId && isValidApplication(request.resource.data);
+        allow delete: if request.auth.uid == userId || isAdmin();
+      }
+    }
+
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}
