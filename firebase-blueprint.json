@@ -34,7 +34,8 @@
           "type": "object",
           "additionalProperties": { "type": "integer" }
         },
-        "profileImage": { "type": "string" }
+        "profileImage": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] }
       },
       "required": ["fullName", "username", "milestones"]
     },
