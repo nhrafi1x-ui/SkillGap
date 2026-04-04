@@ -16,7 +16,11 @@ export function BlogView() {
       setIsLoading(true);
       setError(null);
       try {
-        const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY });
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+        if (!apiKey || apiKey === 'undefined') {
+          throw new Error("Gemini API Key is missing. Please set VITE_GEMINI_API_KEY or GEMINI_API_KEY in your environment variables (e.g., in Vercel project settings).");
+        }
+        const ai = new GoogleGenAI({ apiKey });
         const response = await ai.models.generateContent({
           model: "gemini-3-flash-preview",
           contents: "Search for the latest tech and industry news from today. Provide a list of 6 interesting news articles with titles, short excerpts, full content (a few paragraphs), and the date. Focus on innovation, AI, and global tech trends.",
@@ -42,7 +46,17 @@ export function BlogView() {
           },
         });
 
-        const news = JSON.parse(response.text);
+        if (!response.text) {
+          throw new Error("No response text from Gemini API.");
+        }
+
+        let newsText = response.text.trim();
+        // Handle potential markdown formatting in response
+        if (newsText.startsWith('```json')) {
+          newsText = newsText.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+        }
+
+        const news = JSON.parse(newsText);
         if (Array.isArray(news) && news.length > 0) {
           setDynamicPosts(news);
         } else {
@@ -50,7 +64,8 @@ export function BlogView() {
         }
       } catch (err) {
         console.error("Error fetching news:", err);
-        setError("Failed to fetch latest news. Showing archived articles.");
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        setError(`Failed to fetch latest news: ${errorMessage}. Showing archived articles.`);
         setDynamicPosts(BLOG_POSTS);
       } finally {
         setIsLoading(false);
