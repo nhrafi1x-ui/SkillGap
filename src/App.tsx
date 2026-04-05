@@ -217,31 +217,40 @@ function ChatBot() {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMessage: ChatMessage = { role: 'user', parts: [{ text: input }] };
+    const messageText = input.trim();
+    const userMessage: ChatMessage = { role: 'user', parts: [{ text: messageText }] };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
 
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
-      if (!apiKey || apiKey === 'undefined') {
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || "AIzaSyCUSWpBFTDFzNZCw120_Gu6UYHqSfKdIGU";
+      if (!apiKey || apiKey === 'undefined' || !apiKey.trim()) {
         throw new Error("Gemini API Key is missing. Please set VITE_GEMINI_API_KEY or GEMINI_API_KEY in your environment variables.");
       }
       const ai = new GoogleGenAI({ apiKey });
       const chat = ai.chats.create({
         model: model,
         config: {
-          systemInstruction: "You are a helpful Career Advisor for Your SkillGAP. Your goal is to help users bridge the gap between their current skills and their dream tech job. Be encouraging, professional, and provide actionable advice. You can help with roadmap questions, interview prep, and general tech career guidance.",
+          systemInstruction: "You are a helpful Career Advisor for Your SkillGAP. Your goal is to help users bridge the gap between their current skills and their dream tech job. Be encouraging, professional, and provide actionable advice. You can help with roadmap questions, interview prep, and general tech career guidance. Keep your responses concise and formatted with markdown for readability.",
         },
         history: messages,
       });
 
-      const response = await chat.sendMessage({ message: input });
-      const modelMessage: ChatMessage = { role: 'model', parts: [{ text: response.text || '' }] };
+      const result = await chat.sendMessage({ message: messageText });
+      if (!result || !result.text) {
+        throw new Error("Received an empty response from the AI.");
+      }
+      
+      const modelMessage: ChatMessage = { role: 'model', parts: [{ text: result.text }] };
       setMessages(prev => [...prev, modelMessage]);
     } catch (error) {
       console.error("Chat error:", error);
-      setMessages(prev => [...prev, { role: 'model', parts: [{ text: "Sorry, I encountered an error. Please try again." }] }]);
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred.";
+      setMessages(prev => [...prev, { 
+        role: 'model', 
+        parts: [{ text: `**Error:** ${errorMessage}\n\nPlease check your API key configuration or try again later.` }] 
+      }]);
     } finally {
       setIsLoading(false);
     }
@@ -307,7 +316,7 @@ function ChatBot() {
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[85%] p-3 border-2 border-[#1a3636] shadow-[4px_4px_0px_0px_rgba(13,27,27,1)] ${msg.role === 'user' ? 'bg-[#1a3636] text-[#fdfbf7]' : 'bg-[#fdfbf7] text-[#1a3636]'}`}>
-                    <div className="text-xs font-serif leading-relaxed whitespace-pre-wrap prose prose-invert prose-xs">
+                    <div className={`text-xs font-serif leading-relaxed whitespace-pre-wrap markdown-body ${msg.role === 'user' ? 'text-[#fdfbf7]' : 'text-[#1a3636]'}`}>
                       <Markdown>{msg.parts[0].text}</Markdown>
                     </div>
                   </div>
