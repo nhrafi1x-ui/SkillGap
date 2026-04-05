@@ -16,7 +16,7 @@ export function BlogView() {
       setIsLoading(true);
       setError(null);
       try {
-        const apiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || "AIzaSyCUSWpBFTDFzNZCw120_Gu6UYHqSfKdIGU";
         if (!apiKey || apiKey === 'undefined') {
           throw new Error("Gemini API Key is missing. Please set VITE_GEMINI_API_KEY or GEMINI_API_KEY in your environment variables (e.g., in Vercel project settings).");
         }
