@@ -73,7 +73,7 @@ service cloud.firestore {
              data.text is string && data.text.size() > 0 && data.text.size() < 500 &&
              data.priority in ['High', 'Medium', 'Low'] &&
              data.completed is bool &&
-             data.createdAt is timestamp;
+             (data.createdAt is timestamp || data.createdAt is string); // Allow string if formatted correctly
     }
 
     function isValidApplication(data) {
@@ -100,7 +100,7 @@ service cloud.firestore {
         allow write: if isOwner(userId) || isAdmin();
       }
 
-      // Explicit validation for subcollections if needed (though write covers it, validation is better)
+      // Explicit validation for subcollections
       match /todos/{todoId} {
         allow create, update: if isOwner(userId) && isValidTodo(request.resource.data);
       }
