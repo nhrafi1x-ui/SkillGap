@@ -24,7 +24,7 @@ export function LazyImage({ src, alt, className, ...props }: React.ImgHTMLAttrib
   }, []);
 
   return (
-    <div className={`relative overflow-hidden bg-white ${className}`} ref={imgRef}>
+    <div className={`relative overflow-hidden bg-sky-50 ${className}`} ref={imgRef}>
       {isInView && (
         <img
           src={src}
