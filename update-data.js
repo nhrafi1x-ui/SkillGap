@@ -2,9 +2,6 @@ const fs = require('fs');
 
 let content = fs.readFileSync('src/data.ts', 'utf8');
 
-// We will replace the CAREER_DIRECTORY array with a modified version
-// But since it's a TS file, we can just use regex or eval if we extract the array.
-// Actually, it's easier to just write a simple parser or use regex.
 
 const levels = ['Core', 'Intermediate', 'Advanced'];
 
