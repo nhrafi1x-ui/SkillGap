@@ -1,8 +1,8 @@
 {
   "entities": {
-    "UserProfile": {
+    "User": {
       "title": "User Profile",
-      "description": "User's career profile and progress data.",
+      "description": "User account information and career progress.",
       "type": "object",
       "properties": {
         "fullName": { "type": "string" },
@@ -11,9 +11,14 @@
         "country": { "type": "string" },
         "currentRole": { "type": "string" },
         "interests": { "type": "string" },
+        "cvLink": { "type": "string" },
         "careerPlan": { "type": "string" },
-        "matchedJobId": { "type": "string" },
-        "milestones": {
+        "profileImage": { "type": "string" },
+        "socialLinks": { "type": "array" },
+        "documents": { "type": "array" },
+        "quizResults": { "type": "object" },
+        "matchedJobId": { "type": ["string", "null"] },
+        "milestones": { 
           "type": "object",
           "properties": {
             "discovery": { "type": "boolean" },
@@ -24,24 +29,15 @@
             "hired": { "type": "boolean" }
           }
         },
-        "cvLink": { "type": "string" },
-        "points": { "type": "integer" },
-        "badges": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
-        "quizResults": {
-          "type": "object",
-          "additionalProperties": { "type": "integer" }
-        },
-        "profileImage": { "type": "string" },
+        "points": { "type": "number" },
+        "badges": { "type": "array", "items": { "type": "string" } },
         "role": { "type": "string", "enum": ["admin", "user"] }
       },
-      "required": ["fullName", "username", "milestones"]
+      "required": ["fullName", "username", "milestones", "role"]
     },
     "Todo": {
-      "title": "Todo",
-      "description": "A task for the user to complete.",
+      "title": "Todo Item",
+      "description": "A task for the user's career roadmap.",
       "type": "object",
       "properties": {
         "text": { "type": "string" },
@@ -49,33 +45,38 @@
         "completed": { "type": "boolean" },
         "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["text", "priority", "completed", "createdAt"]
+      "required": ["text", "priority", "completed"]
     },
     "Application": {
-      "title": "Application",
-      "description": "A job application tracked by the user.",
+      "title": "Job Application",
+      "description": "A job application being tracked by the user.",
       "type": "object",
       "properties": {
         "company": { "type": "string" },
         "role": { "type": "string" },
-        "date": { "type": "string", "format": "date" },
-        "status": { "type": "string", "enum": ["Applied", "Interview", "Offer", "Rejected"] }
+        "status": { "type": "string", "enum": ["Applied", "Interview", "Offer", "Rejected"] },
+        "date": { "type": "string" },
+        "link": { "type": "string" }
       },
       "required": ["company", "role", "status"]
     }
   },
   "firestore": {
-    "/users/{userId}": {
-      "schema": "UserProfile",
-      "description": "User's profile document."
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Top-level user profile."
     },
-    "/users/{userId}/todos/{todoId}": {
+    "users/{userId}/todos/{todoId}": {
       "schema": "Todo",
-      "description": "User's todo list."
+      "description": "User-specific tasks."
     },
-    "/users/{userId}/applications/{appId}": {
+    "users/{userId}/applications/{appId}": {
       "schema": "Application",
-      "description": "User's job applications."
+      "description": "User-specific job applications."
+    },
+    "test/connection": {
+      "schema": { "type": "object", "properties": { "status": { "type": "string" } } },
+      "description": "Diagnostic document for connection testing."
     }
   }
 }

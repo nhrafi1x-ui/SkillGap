@@ -1,117 +1,123 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // ===============================================================
-    // Assumed Data Model
-    // ===============================================================
-    //
-    // Collection: users
-    // Document ID: {userId}
-    // Fields:
-    //   - fullName: string (required)
-    //   - username: string (required)
-    //   - education: string
-    //   - country: string
-    //   - currentRole: string
-    //   - interests: string
-    //   - careerPlan: string
-    //   - matchedJobId: string
-    //   - milestones: map (required)
-    //   - cvLink: string
-    //   - points: number
-    //   - badges: list
-    //   - quizResults: map
-    //   - profileImage: string
-    //   - role: string (admin/user)
-    //
-    // Collection: users/{userId}/todos
-    // Document ID: {todoId}
-    // Fields:
-    //   - text: string (required)
-    //   - priority: string (required, enum: ["High", "Medium", "Low"])
-    //   - completed: bool (required)
-    //   - createdAt: timestamp (required)
-    //
-    // Collection: users/{userId}/applications
-    // Document ID: {appId}
-    // Fields:
-    //   - company: string (required)
-    //   - role: string (required)
-    //   - date: string (format: YYYY-MM-DD)
-    //   - status: string (required, enum: ["Applied", "Interview", "Offer", "Rejected"])
-    //
-    // ===============================================================
-
-    // ===============================================================
-    // Helper Functions
-    // ===============================================================
     
-    function isAuthenticated() {
-      return request.auth != null;
+    // 0. Global Safety Net (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
     }
 
-    function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
-    }
-
-    function isAdmin() {
-      return isAuthenticated() &&
-        ((request.auth.token.email == "nhrafi1x@gmail.com" && request.auth.token.email_verified == true) ||
-         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') == 'admin'));
-    }
-
+    // --- Helpers ---
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    
+    // Auth token email verification check
+    function isVerified() { return true; } // Simplified for dev, relies on isSignedIn() and isOwner()
+    
+    // --- Validation Blueprints ---
+    
     function isValidUser(data) {
-      return data.keys().hasAll(['fullName', 'username', 'milestones']) &&
-             data.fullName is string && data.fullName.size() > 0 && data.fullName.size() < 100 &&
-             data.username is string && data.username.size() > 0 && data.username.size() < 50 &&
-             data.milestones is map;
+      return (data.get('fullName', '') is string && data.get('fullName', '').size() <= 100) &&
+             (data.get('username', '') is string && data.get('username', '').size() <= 100) &&
+             (data.get('education', '') is string && data.get('education', '').size() <= 500) &&
+             (data.get('country', '') is string && data.get('country', '').size() <= 100) &&
+             (data.get('currentRole', '') is string && data.get('currentRole', '').size() <= 200) &&
+             (data.get('interests', '') is string && data.get('interests', '').size() <= 1000) &&
+             (data.get('cvLink', '') is string && data.get('cvLink', '').size() <= 2000) &&
+             (data.get('careerPlan', '') is string && data.get('careerPlan', '').size() <= 100000) &&
+             (data.get('profileImage', '') is string && data.get('profileImage', '').size() <= 200000) &&
+             (data.get('socialLinks', []) is list && data.get('socialLinks', []).size() <= 20) &&
+             (data.get('documents', []) is list && data.get('documents', []).size() <= 20) &&
+             (data.get('milestones', {}) is map) &&
+             (data.get('quizResults', {}) is map) &&
+             (data.get('badges', []) is list && data.get('badges', []).size() <= 100) &&
+             (data.get('points', 0) is number) &&
+             (data.get('role', 'user') in ['user', 'admin']) &&
+             (!('matchedJobId' in data) || data.matchedJobId == null || (data.matchedJobId is string && data.matchedJobId.size() <= 100));
+    }
+
+    function isProperNewUser(data) {
+      return data.keys().hasAll(['fullName', 'username', 'milestones', 'role', 'points', 'badges', 'quizResults']);
     }
 
     function isValidTodo(data) {
       return data.keys().hasAll(['text', 'priority', 'completed', 'createdAt']) &&
-             data.text is string && data.text.size() > 0 && data.text.size() < 500 &&
+             data.text is string && data.text.size() <= 1000 &&
              data.priority in ['High', 'Medium', 'Low'] &&
              data.completed is bool &&
-             (data.createdAt is timestamp || data.createdAt is string); // Allow string if formatted correctly
+             data.createdAt is timestamp;
     }
 
     function isValidApplication(data) {
       return data.keys().hasAll(['company', 'role', 'status']) &&
-             data.company is string && data.company.size() > 0 && data.company.size() < 100 &&
-             data.role is string && data.role.size() > 0 && data.role.size() < 100 &&
+             data.company is string && data.company.size() <= 200 &&
+             data.role is string && data.role.size() <= 200 &&
              data.status in ['Applied', 'Interview', 'Offer', 'Rejected'] &&
-             (!('date' in data) || (data.date is string && data.date.matches("^\\d{4}-\\d{2}-\\d{2}$")));
+             (!('date' in data) || (data.date is string && data.date.size() <= 100)) &&
+             (!('link' in data) || (data.link is string && data.link.size() <= 1000));
     }
 
-    // ===============================================================
-    // Rules
-    // ===============================================================
+    // --- Collection Routes ---
 
-    match /users/{userId} {
-      // Allow read/write for owner or admin
-      allow read: if isOwner(userId) || isAdmin();
-      allow create: if isOwner(userId) && isValidUser(request.resource.data) && !('role' in request.resource.data);
-      allow update: if (isOwner(userId) && isValidUser(request.resource.data) && (request.resource.data.get('role', 'user') == resource.data.get('role', 'user'))) || isAdmin();
-      
-      // Subcollections
-      match /{document=**} {
-        allow read: if isOwner(userId) || isAdmin();
-        allow write: if isOwner(userId) || isAdmin();
-      }
-
-      // Explicit validation for subcollections
-      match /todos/{todoId} {
-        allow create, update: if isOwner(userId) && isValidTodo(request.resource.data);
-      }
-
-      match /applications/{appId} {
-        allow create, update: if isOwner(userId) && isValidApplication(request.resource.data);
-      }
-    }
-
-    match /test/connection {
+    // Connection Test
+    match /test/{docId} {
       allow read: if true;
+    }
+
+      // Users
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      
+      allow create: if isOwner(userId) && 
+                      isVerified() &&
+                      isValidId(userId) &&
+                      isValidUser(incoming()) && 
+                      isProperNewUser(incoming()) &&
+                      incoming().role == 'user';
+      
+      allow update: if isOwner(userId) && 
+                      isVerified() &&
+                      isValidId(userId) &&
+                      isValidUser(incoming()) &&
+                      incoming().role == existing().role; // Role remains immutable for users
+    }
+
+    // Subcollections: Todos
+    match /users/{userId}/todos/{todoId} {
+      allow list: if isOwner(userId);
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && 
+                      isValidTodo(incoming()) && 
+                      isValidId(todoId) &&
+                      incoming().createdAt == request.time; // Mandatory server timestamp
+                      
+      allow update: if isOwner(userId) && 
+                      isValidTodo(incoming()) && (
+        incoming().diff(existing()).affectedKeys().hasOnly(['text', 'priority', 'completed'])
+      );
+      
+      allow delete: if isOwner(userId);
+    }
+
+    // Subcollections: Applications
+    match /users/{userId}/applications/{appId} {
+      allow list: if isOwner(userId);
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && 
+                      isValidApplication(incoming()) && 
+                      isValidId(appId);
+                      
+      allow update: if isOwner(userId) && 
+                      isValidApplication(incoming()) && (
+        // Identity Integrity: Application status transitions
+        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'date', 'link'])
+      );
+      
+      allow delete: if isOwner(userId);
     }
   }
 }

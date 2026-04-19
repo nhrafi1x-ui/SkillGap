@@ -45,6 +45,7 @@ export interface UserProfile {
   badges?: string[];
   quizResults?: Record<string, number>;
   profileImage?: string;
+  role?: 'admin' | 'user';
 }
 
 export interface Todo {
@@ -60,6 +61,7 @@ export interface Application {
   company: string;
   role: string;
   date?: string;
+  link?: string;
   status: 'Applied' | 'Interview' | 'Offer' | 'Rejected';
 }
 

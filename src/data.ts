@@ -279,29 +279,52 @@ export const CAREER_DIRECTORY: JobProfile[] = [
 export const QUIZ_QUESTIONS = [
   {
     id: 1,
-    question: "What kind of problems do you enjoy solving most?",
+    question: "What kind of projects excite you the most?",
     options: [
-      { text: "Visual and interactive design challenges", category: "dev" },
-      { text: "Finding patterns and insights in complex information", category: "data" },
-      { text: "Optimizing systems and automating repetitive tasks", category: "ops" }
+      { text: "Building beautiful, interactive websites that people use every day", category: "frontend" },
+      { text: "Designing complex systems and managing how data flows behind the scenes", category: "backend" },
+      { text: "Creating intelligent systems that can learn and make predictions", category: "ai/ml" },
+      { text: "Securing networks and protecting sensitive data from hackers", category: "security" }
     ]
   },
   {
     id: 2,
-    question: "Which of these tools or concepts sounds most interesting?",
+    question: "Which of these technical tasks sounds most satisfying?",
     options: [
-      { text: "Building beautiful user interfaces with React", category: "dev" },
-      { text: "Writing SQL queries to extract business insights", category: "data" },
-      { text: "Managing servers and deploying applications with Docker", category: "ops" }
+      { text: "Perfecting the layout and animations of a mobile app", category: "mobile" },
+      { text: "Analyzing massive datasets to find hidden business trends", category: "data" },
+      { text: "Automating the deployment of software to the cloud", category: "devops" },
+      { text: "Designing the overall architecture of a global cloud system", category: "cloud" }
     ]
   },
   {
     id: 3,
-    question: "How do you prefer to see the results of your work?",
+    question: "How do you prefer to spend your time at work?",
     options: [
-      { text: "Instantly seeing a change on a website or app", category: "dev" },
-      { text: "Presenting a clear chart or report that tells a story", category: "data" },
-      { text: "Knowing that a system is running smoothly and efficiently", category: "ops" }
+      { text: "Collaborating with designers to create great user experiences", category: "frontend/ux" },
+      { text: "Writing clean, efficient code for server-side logic", category: "backend" },
+      { text: "Experimenting with mathematical models and algorithms", category: "ai/ml" },
+      { text: "Investigating security breaches and hardening systems", category: "security" }
+    ]
+  },
+  {
+    id: 4,
+    question: "What's your ideal 'output' from a project?",
+    options: [
+      { text: "A seamless, high-performance mobile application", category: "mobile" },
+      { text: "A robust API that powers multiple platforms", category: "backend" },
+      { text: "A predictive model that improves decision making", category: "ai/ml" },
+      { text: "A fully automated, scalable cloud infrastructure", category: "cloud/devops" }
+    ]
+  },
+  {
+    id: 5,
+    question: "Which field of technology interests you most right now?",
+    options: [
+      { text: "Web Development (Frontend/Backend/Fullstack)", category: "web" },
+      { text: "Artificial Intelligence and Data Science", category: "ai/data" },
+      { text: "Cybersecurity and Ethical Hacking", category: "security" },
+      { text: "Cloud Computing and Infrastructure", category: "cloud" }
     ]
   }
 ];

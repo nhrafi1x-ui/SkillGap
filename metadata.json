@@ -1,5 +1,8 @@
 {
-  "name": "SkillGAP B&W",
-  "description": "Career Path Finder & Skill Gap Tracker with interactive roadmap and learning resources.",
-  "requestFramePermissions": []
+  "name": "Remix: SkillGAP ",
+  "description": "A career path finder and skill gap tracker with personalized roadmaps, interactive quizzes, and modern tech resources.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": []
 }

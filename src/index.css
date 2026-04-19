@@ -5,27 +5,48 @@
   --font-serif: "Playfair Display", serif;
   --font-mono: "Space Mono", monospace;
   --font-sans: "Inter", sans-serif;
-  --color-brand-primary: #1a3636;
-  --color-brand-secondary: #fdfbf7;
-  --color-brand-accent-1: #d95d39;
-  --color-brand-accent-2: #708d81;
-  --color-brand-accent-3: #f2c14e;
-  --color-brand-shadow: #0d1b1b;
+  --color-brand-primary: #0369a1; /* sky-700 */
+  --color-brand-secondary: #f0f9ff; /* sky-50 - Primary Background */
+  --color-brand-accent-1: #059669; /* emerald-600 - Button Primary */
+  --color-brand-accent-2: #047857; /* emerald-700 - Button Hover */
+  --color-brand-accent-3: #10b981; /* emerald-500 - Soft Accent */
+  --color-brand-shadow: #0c4a6e; /* sky-900 */
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes gentleBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  @keyframes spinSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes reverseSpin {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+  }
+  --animate-fadeIn: fadeIn 300ms ease-out;
+  --animate-gentleBounce: gentleBounce 500ms ease-in-out;
+  --animate-spin-slow: spinSlow 30s linear infinite;
+  --animate-reverse-spin: reverseSpin 20s linear infinite;
 }
 
 body {
-  @apply bg-[#fdfbf7] text-[#1a3636] font-sans;
+  @apply bg-sky-50 text-slate-700 font-sans animate-fadeIn;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  @apply font-serif;
+  @apply font-serif text-slate-900;
 }
 
 .markdown-body {
-  @apply font-serif text-sm leading-relaxed text-[#1a3636];
+  @apply font-sans leading-relaxed text-slate-700;
 }
 .markdown-body h1, .markdown-body h2, .markdown-body h3 {
-  @apply font-bold mt-6 mb-3 uppercase tracking-tight;
+  @apply font-serif font-bold mt-6 mb-3 uppercase tracking-tight text-slate-900;
 }
 .markdown-body h1 { @apply text-2xl; }
 .markdown-body h2 { @apply text-xl; }
@@ -34,10 +55,10 @@ h1, h2, h3, h4, h5, h6 {
 .markdown-body ul { @apply list-disc pl-5 mb-4; }
 .markdown-body ol { @apply list-decimal pl-5 mb-4; }
 .markdown-body li { @apply mb-1; }
-.markdown-body strong { @apply font-bold; }
-.markdown-body em { @apply italic; }
-.markdown-body a { @apply underline hover:text-[#1a3636]/70; }
-.markdown-body blockquote { @apply border-l-4 border-[#1a3636] pl-4 italic my-4; }
-.markdown-body code { @apply font-mono bg-[#fdfbf7] border border-[#1a3636] px-1 py-0.5 text-xs; }
-.markdown-body pre { @apply bg-[#1a3636] text-[#fdfbf7] p-4 overflow-x-auto mb-4 border-2 border-[#1a3636]; }
+.markdown-body strong { @apply font-bold text-slate-900; }
+.markdown-body em { @apply italic text-sky-700; }
+.markdown-body a { @apply underline text-emerald-600 hover:text-emerald-700; }
+.markdown-body blockquote { @apply border-l-4 border-emerald-500 pl-4 italic my-4 text-slate-600; }
+.markdown-body code { @apply font-mono bg-sky-100 border border-sky-200 px-1 py-0.5 text-xs text-emerald-700; }
+.markdown-body pre { @apply bg-slate-900 text-slate-200 p-4 overflow-x-auto mb-4 border-2 border-slate-800 rounded-xl; }
 .markdown-body pre code { @apply bg-transparent text-inherit p-0 text-xs border-0; }
