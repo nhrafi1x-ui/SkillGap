@@ -22,7 +22,7 @@ if (match) {
       break;
     }
     j++;
-  }
+  }  
   
   if (j < content.length) {
     content = content.slice(0, startIndex) + content.slice(j + 1);
