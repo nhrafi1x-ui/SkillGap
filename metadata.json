@@ -1,6 +1,6 @@
 {
   "name": "Remix: SkillGAP ",
-  "description": "A career path finder and skill gap tracker with personalized roadmaps, interactive quizzes, and modern tech resources.",
+  "description": "A career path finder and skill gap tracker that delivers highly specific, data-driven guidance. It analyzes a user’s current skills, experience, and goals to identify exact skill gaps, then generates step-by-step, time-bound learning roadmaps. It includes targeted interactive quizzes to assess proficiency, recommends up-to-date tools, courses, and technologies relevant to the chosen field, and provides clear milestones, estimated timelines, and measurable outcomes for each stage of progress.",
   "requestFramePermissions": [
     "microphone"
   ],
