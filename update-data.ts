@@ -13,7 +13,7 @@ content = content.replace(/skills:\s*\[(.*?)\]/g, (match, skillsStr) => {
     const level = levels[index % 3];
     breakdown += `\n      { name: "${skill}", level: "${level}" as const, importance: "Crucial for mastering ${skill.toLowerCase()} in this role.", resource: { title: "Learn ${skill}", url: "https://www.google.com/search?q=learn+${encodeURIComponent(skill)}" } },`;
   });
-  breakdown += `\n    ]`;
+  breakdown += `\n    ]`; 
   
   return match + `,` + breakdown;
 });
