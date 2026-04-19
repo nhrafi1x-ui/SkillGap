@@ -9,7 +9,7 @@ export const SKILL_QUIZZES = {
     { q: "Which event occurs when the user clicks on an HTML element?", options: ["onclick", "onchange", "onmouseclick", "onmouseover"], a: 0 },
     { q: "How do you declare a JavaScript variable?", options: ["var carName;", "variable carName;", "v carName;", "carName var;"], a: 0 },
     { q: "What will `console.log(1 + '1')` output?", options: ["11", "2", "undefined", "NaN"], a: 0 },
-    { q: "Which operator is used to assign a value to a variable?", options: ["=", "*", "-", "x"], a: 0 }
+    { q: "Which operator  is used to assign a value to a variable?", options: ["=", "*", "-", "x"], a: 0 }
   ],
   sql: [
     { q: "Which SQL statement is used to extract data from a database?", options: ["SELECT", "GET", "OPEN", "EXTRACT"], a: 0 },
