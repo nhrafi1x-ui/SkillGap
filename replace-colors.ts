@@ -13,5 +13,4 @@ files.forEach(file => {
   
   fs.writeFileSync(file, content);
 });
-
-console.log('Colors replaced successfully!');
+console.log('Colors replace successfully!');
